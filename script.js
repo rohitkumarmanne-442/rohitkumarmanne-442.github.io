@@ -559,7 +559,7 @@ const KB = [
   { keys: ["aws","cloud","sagemaker","bedrock","lambda","eks","docker","kubernetes","terraform","deploy","serving","vllm","ollama"],
     answer: () => `Cloud & MLOps: <strong>AWS</strong> (SageMaker, Bedrock, EKS, Lambda, S3), Docker, Kubernetes, Terraform, MLflow, Jenkins, plus LLM serving with <strong>vLLM</strong> and <strong>Ollama</strong>, and eval with Ragas & TruLens. He's run full CI/CD with 99.9% uptime.` },
 
-  { keys: ["qd","qdev","orchestration","quality dev","sdlc","sdet","flagship","live project","building","in progress","current project","vercel","hitl","multi agent platform"],
+  { keys: ["qd","qdev","orchestration","quality dev","sdlc","sdet","flagship","live project","building","in progress","current project","latest project","recent project","newest project","working on","new project","vercel","hitl","multi agent platform"],
     answer: () => `🎛️ <strong>QD Orchestration</strong> is Rohit's flagship — a <strong>live, actively-building</strong> multi-agent SDLC + SDET platform. A Jira story key flows through <strong>5 Claude-powered agents</strong> (code-gen & review on Opus; test-gen, Playwright E2E & Splunk→Bug on Sonnet) across Test → Stage → Prod behind <strong>3 Human-in-the-Loop gates</strong>. Features a self-healing bug-fix loop, real-time WebSocket pipeline, a Monaco code viewer, and role-based Dev/QE/Lead/Admin workspaces. Stack: TypeScript/React + FastAPI/Python, SQLModel, deployed on Vercel + Render. <a href="https://qd-orchestrationai.vercel.app" target="_blank">▶ Live demo</a>` },
 
   { keys: ["project","projects","portfolio","built","work samples","sec","diffusion","face"],
@@ -601,12 +601,14 @@ function findAnswer(query) {
   if (GREETINGS.some(g => q === g || q.startsWith(g + " "))) return `Hey there! 👋 Ask me about Rohit's experience, skills, projects or how to reach him.`;
   if (THANKS.some(t => q.includes(t))) return `You're welcome! 😊 Anything else you'd like to know about Rohit?`;
 
+  // Common words that shouldn't drive topic matching
+  const STOP = new Set(["rohit","manne","about","what","whats","tell","your","yours","does","done","have","with","this","that","please","know","like","would","there","their","then","they","want","give"]);
   let best = null, bestScore = 0;
   for (const entry of KB) {
     let score = 0;
     for (const k of entry.keys) {
       if (q.includes(k)) score += k.split(" ").length * 2; // multi-word phrase = stronger
-      else { const kw = k.split(" "); for (const w of kw) if (w.length > 3 && q.includes(w)) score += 1; }
+      else { for (const w of k.split(" ")) if (w.length > 3 && !STOP.has(w) && q.includes(w)) score += 1; }
     }
     if (score > bestScore) { bestScore = score; best = entry; }
   }
@@ -615,8 +617,14 @@ function findAnswer(query) {
 }
 
 /* ----- Groq LLM integration (with résumé system prompt) ----- */
+// Public Cloudflare Worker endpoint that proxies Groq (the API KEY lives inside
+// the Worker as a secret, never here). Safe to commit — this URL is not a secret.
+// Paste your deployed Worker URL here to turn on the live thinking-agent.
+const DEFAULT_PROXY_URL = "";
+
 const CFG = window.AGENT_CONFIG || {};
-const AGENT_MODE = CFG.groqProxyUrl ? "proxy" : (CFG.groqApiKey ? "direct" : "local");
+const PROXY_URL = (CFG.groqProxyUrl || DEFAULT_PROXY_URL || "").trim();
+const AGENT_MODE = PROXY_URL ? "proxy" : (CFG.groqApiKey ? "direct" : "local");
 
 function buildResumeContext() {
   const exp = DATA.experience.map(e =>
@@ -666,9 +674,9 @@ async function askGroq(userText) {
   ];
   let data;
   if (AGENT_MODE === "proxy") {
-    const r = await fetch(CFG.groqProxyUrl, {
+    const r = await fetch(PROXY_URL, {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages, model: CFG.model }),
+      body: JSON.stringify({ messages, model: CFG.model || "llama-3.3-70b-versatile" }),
     });
     data = await r.json();
   } else {
