@@ -21,40 +21,57 @@ const DATA = {
   ],
 
   skills: [
-    { icon: "🐍", title: "Languages", items: ["Python (Expert)", "SQL", "Java", "JavaScript", "TypeScript", "C++", "C", "R", "MATLAB", "Bash/Shell"] },
-    { icon: "🧠", title: "AI/ML & GenAI", items: ["Advanced RAG", "GraphRAG", "Prompt Engineering", "Fine-Tuning (LoRA)", "Function Calling", "Hugging Face", "PyTorch", "TensorFlow", "Scikit-Learn", "XGBoost"] },
-    { icon: "🤖", title: "Frameworks & Agentic AI", items: ["LangChain", "LlamaIndex", "AutoGen", "CrewAI", "DSPy", "FastAPI", "React Vite", "Spring Boot"] },
-    { icon: "☁️", title: "Cloud, MLOps & Serving", items: ["AWS (SageMaker, Bedrock, EKS, Lambda, S3)", "Docker", "Kubernetes", "Terraform", "MLflow", "Jenkins", "vLLM", "Ollama", "Ragas", "TruLens"] },
-    { icon: "🗄️", title: "Databases & Vector Stores", items: ["Pinecone", "ChromaDB", "FAISS", "Qdrant", "Neo4j", "PostgreSQL", "MongoDB", "Redis", "Elasticsearch"] },
+    { title: "Languages", items: ["Python (Expert)", "SQL", "Java", "JavaScript", "Bash/Shell"] },
+    { title: "GenAI & Agentic AI", items: ["LangChain", "LangGraph", "LlamaIndex", "CrewAI", "AutoGen", "DSPy", "MCP", "Function Calling", "ReAct", "Multi-Agent Orchestration", "Advanced RAG", "GraphRAG", "Agentic RAG", "Prompt Engineering", "Guardrails", "RAGAS", "TruLens", "LangSmith"] },
+    { title: "LLMs & Fine-Tuning", items: ["OpenAI GPT-4o", "Anthropic Claude (Opus/Sonnet)", "Llama 3", "Mistral", "Hugging Face Transformers", "LoRA", "QLoRA", "PEFT", "RLHF", "Synthetic Data"] },
+    { title: "ML & Deep Learning", items: ["PyTorch", "TensorFlow", "Scikit-Learn", "XGBoost", "LightGBM", "Pandas", "NumPy", "spaCy", "Feature Engineering", "A/B Testing", "Model Monitoring", "Drift Detection"] },
+    { title: "Cloud & MLOps", items: ["AWS (SageMaker, Bedrock, EKS, Lambda, S3)", "Docker", "Kubernetes", "Terraform", "Jenkins", "GitHub Actions", "MLflow", "Airflow", "Ray", "vLLM", "Ollama"] },
+    { title: "Data & Serving", items: ["Pinecone", "ChromaDB", "FAISS", "Qdrant", "Neo4j", "PostgreSQL", "MongoDB", "Redis", "Elasticsearch", "Kafka", "FastAPI", "Flask", "Pydantic", "React Vite", "Streamlit"] },
   ],
 
   experience: [
     {
-      role: "Agentic AI Engineer", company: "Hilton Worldwide", where: "Memphis, TN", when: "Jul 2025 – May 2026",
+      role: "Agentic AI Engineer · QE", company: "Hilton Worldwide", where: "Memphis, TN", when: "Jul 2025 – May 2026",
       points: [
-        "Architected the Agentic AI 'Hilton QE Agent' using Amazon Bedrock (Claude Opus) and LangChain/CrewAI concepts, with a responsive React/FastAPI system to automate Test Scenario generation — cutting manual effort by 70%.",
-        "Engineered an autonomous Agentic RAG pipeline using Pinecone for vector storage and Redis for memory, integrating Splunk and Confluence to diagnose errors and cut Mean Time to Resolution (MTTR) by 50%.",
-        "Designed complex tool-use and API orchestration workflows (Create, Modify, Cancel) letting agents query external databases via Postman, raising autonomous task success rates for QA.",
-        "Streamlined multi-agent orchestration for employee onboarding with advanced prompt engineering and planning/reasoning, saving 20+ hours per hire.",
+        "Architected 'Hilton QE Agent', a production multi-agent system on Amazon Bedrock (Claude Opus 4.6) using LangChain and CrewAI, with a React Vite/FastAPI interface — automating test-scenario generation across 12+ QE teams and cutting manual effort by 70%.",
+        "Engineered an Agentic RAG pipeline with Pinecone (hybrid dense + sparse retrieval), Redis memory, and Splunk/Confluence tool integrations for autonomous root-cause diagnosis, cutting MTTR by 50%.",
+        "Designed tool-use and function-calling workflows (Create/Modify/Cancel) plus multi-agent orchestration for employee onboarding via LangGraph-style planning — saving 20+ hours per hire and raising autonomous task success to 92%.",
+        "Implemented LLM evaluation pipelines with RAGAS and TruLens, enforcing safety guardrails and cutting hallucinations from 14% to under 5% in production.",
       ],
     },
     {
       role: "Generative AI Engineer", company: "HealthKard", where: "Remote", when: "Jul 2024 – Jun 2025",
       points: [
-        "Developed a 'Health Assistant' chatbot POC using LangChain and leading LLMs (OpenAI, Claude) to guide users from symptom analysis to doctor discovery via multi-step reasoning.",
-        "Built and deployed a production-grade RAG architecture using ChromaDB for vector embeddings, delivering accurate, context-aware answers with robust memory management.",
-        "Applied advanced prompt engineering and instruction design, fine-tuning with synthetic data and rigorous evaluation to reduce hallucinations.",
+        "Developed the 'Health Assistant' chatbot using LangChain with OpenAI GPT-4o and Anthropic Claude, applying multi-step reasoning to guide users from symptom analysis to doctor discovery across 5K+ providers.",
+        "Built a production RAG architecture with ChromaDB embeddings, semantic chunking, and conversation memory, deployed via FastAPI on AWS with Docker.",
+        "Fine-tuned LLMs with LoRA on synthetic data to translate complex insurance policies into plain language, with guardrails and RAGAS evaluation to monitor hallucinations and bias.",
       ],
     },
     {
-      role: "AI/ML Engineer", company: "Capgemini", where: "Hyderabad, India", when: "Jun 2021 – Jul 2023",
+      role: "AI & ML Engineer", company: "Capgemini", where: "Hyderabad, India · Hybrid", when: "Jul 2022 – Jul 2023",
       points: [
-        "Owned the end-to-end ML lifecycle for an insurance fraud-detection platform — from data ingestion and feature engineering to deployment and monitoring — using XGBoost and Python to score 10,000+ claims daily at 88% accuracy.",
-        "Engineered robust feature pipelines over large, messy claims data with Pandas, NumPy and SQL, tackling class imbalance and data drift to keep precision high and false positives low in production.",
-        "Architected real-time inference microservices in Flask, containerized with Docker and deployed on AWS (Lambda, S3), cutting fraud-identification time by 40% and enabling decisions at the point of claim.",
-        "Built an NLP pipeline with spaCy and Hugging Face Transformers to mine customer feedback for sentiment and intent, improving response prioritization by 30%.",
-        "Established a full MLOps CI/CD pipeline (Jenkins, Kubernetes on Amazon EKS, Terraform IaC) with automated testing, containerized model serving and monitoring — reducing manual deployment effort by 80% and sustaining 99.9% uptime.",
-        "Partnered closely with data scientists, QA and business stakeholders to translate fraud-investigation requirements into measurable model objectives, and documented experiments and pipelines for reproducibility and audit.",
+        "Owned end-to-end development of a real-time fraud-detection microservice for the AAA Auto Club Group — a Flask REST API in Docker now handling 10,000+ claims a day and cutting time-to-flag fraudulent payouts by 40%.",
+        "Built an NLP pipeline with spaCy and Hugging Face Transformers to analyze unstructured customer feedback, automating issue categorization at 92% accuracy and helping support prioritize responses 30% more effectively.",
+        "Built and maintained the full MLOps CI/CD pipeline (Jenkins, Docker, Kubernetes on AWS), automating everything from model validation to canary deployments — slashing manual deployment effort 80% and ensuring 99.9% uptime.",
+        "Set up production model monitoring with Prometheus and Grafana, implementing Kullback-Leibler (KL) divergence for data-drift detection that auto-triggered retraining via AWS SageMaker.",
+      ],
+    },
+    {
+      role: "Junior Data Scientist", company: "Capgemini", where: "Hyderabad, India · Hybrid", when: "Jun 2021 – Jul 2022",
+      points: [
+        "Led development of a new insurance fraud model for AAA — an XGBoost model that significantly outperformed Logistic Regression and Random Forest baselines, hitting 88% accuracy and 0.94 AUC on suspicious claims.",
+        "Drove the model's gains through deep feature engineering — mining customer and policy data to craft new interaction terms and apply one-hot encoding, boosting precision by 15%.",
+        "Kicked off the project with thorough exploratory data analysis (EDA) using Pandas Profiling and Seaborn; the insights shaped the feature-selection strategy and guided the entire modeling process.",
+        "Partnered with the MLOps team to define the model's API contract, aligning on inputs and outputs to ensure a smooth deployment.",
+      ],
+    },
+    {
+      role: "Data Analyst Intern", company: "Capgemini", where: "Remote", when: "Jan 2021 – May 2021",
+      points: [
+        "Designed and built a Patient Readmission Risk Dashboard from scratch in Tableau, giving clinicians a single source of truth to monitor at-risk patient groups from historical EHR data.",
+        "Built a dynamic filter letting doctors segment patient data in real time by diagnosis (ICD-10 codes) or demographics to spot trends instantly.",
+        "Automated tracking of critical KPIs (Average Length of Stay, 30-Day Readmission Rate), saving the clinical analytics team 15+ hours of manual work each week.",
+        "Wrote Python scripts to clean and standardize 50,000+ patient records, improving the accuracy and reliability of the data feeding the dashboard.",
       ],
     },
   ],
@@ -63,31 +80,33 @@ const DATA = {
     {
       featured: true,
       tag: "Flagship", status: "Live · Building in progress",
-      title: "QD Orchestration",
-      tagline: "Unified multi-agent SDLC + SDET platform for DEV & QE teams.",
-      desc: "A Jira story key goes in; specialist Claude-powered agents drive it through Test → Stage → Prod behind three Human-in-the-Loop approval gates — generating code, tests, bug tickets and deployments from a single story key. Real-time pipeline over WebSockets, a Monaco-backed code viewer, a self-healing bug-fix loop, and resume-after-approval checkpointing.",
+      title: "QDev Orchestration",
+      tagline: "Agentic SDLC platform — drives stories Dev → QE → Test → Stage → Prod with human-in-the-loop gates.",
+      desc: "An end-to-end SDLC orchestration platform that drives stories through Dev → QE → Test → Stage → Prod via 6 specialized Claude agents (Manager, Dev, QE, Code Review, E2E, Splunk→Bug) gated by 3 HITL checkpoints, with a state-machine bug-fix loop that retries failures using prior context. A hybrid model-routing layer (Claude Sonnet 4.6 by default, Opus 4.7 for code-gen & principal-engineer reviews) streams live state over WebSockets to a React/Vite/Tailwind + Monaco UI, wired to 8+ integrations with 30s health polling.",
       highlights: [
-        ["🧠", "5 live Claude agents", "Code-gen & review on Opus; test-gen, Playwright E2E & Splunk→Bug on Sonnet"],
-        ["🚦", "3 HITL approval gates", "Role-based: Dev/QE → Test, Lead → Stage, Admin → Prod"],
-        ["🔁", "Self-healing bug loop", "Test failures feed back into the Dev agent until they pass"],
-        ["⚡", "Realtime over WebSocket", "Live pipeline + integration-health streaming"],
+        ["🧠", "6 specialized Claude agents", "Manager, Dev, QE, Code Review, E2E & Splunk→Bug — hybrid Sonnet 4.6 / Opus 4.7 routing"],
+        ["🚦", "3 HITL approval gates", "Human checkpoints across Dev → QE → Test → Stage → Prod"],
+        ["🔁", "State-machine bug loop", "Retries failures using prior context until they pass"],
+        ["🔌", "8+ live integrations", "Jira, GitHub, Jenkins, Splunk, Docker, Anthropic — WebSocket state, 30s health polling"],
       ],
-      agents: [["Code Generator","Opus"],["Code Reviewer","Opus"],["Test Case Generator","Sonnet"],["E2E Automation","Sonnet"],["Splunk → Bug","Sonnet"]],
-      stack: ["TypeScript", "React", "FastAPI", "Python", "WebSockets", "SQLModel", "Monaco", "Claude API", "Vercel", "Render"],
+      agents: [["Manager","Sonnet"],["Dev · Code-Gen","Opus"],["QE · Test Cases","Sonnet"],["Code Review","Opus"],["E2E Automation","Sonnet"],["Splunk → Bug","Sonnet"]],
+      stack: ["TypeScript", "React Vite", "Tailwind", "FastAPI", "Python", "WebSockets", "Monaco", "Claude Opus/Sonnet", "Vercel", "Render"],
       live: "https://qd-orchestrationai.vercel.app",
       api: "https://qd-orchestration-api.onrender.com/docs",
       repo: "https://github.com/rohitkumarmanne-442/Quality-Dev-Orchestration-AI",
-      when: "2025 – Present",
+      when: "May 2026 – Present",
     },
     {
-      tag: "RAG · Live Demo", title: "Advanced RAG for SEC Filings",
-      desc: "Production-grade RAG for financial data retrieval using LlamaIndex + Groq, with semantic chunking, hybrid search (dense + sparse BM25), and a <5% hallucination rate. Interactive Streamlit app with live pipeline visualization & latency metrics.",
-      stack: ["Python", "LlamaIndex", "ChromaDB", "Groq", "Streamlit"], when: "Apr 2025 – Present",
+      tag: "Agentic RAG · Live Demo", title: "Advanced Agentic RAG for SEC Filings",
+      desc: "Production Agentic RAG over SEC 10-K/10-Q filings using LlamaIndex, Groq Llama-3.1-70B, and planner-executor agents with hybrid search (dense all-MiniLM-L6-v2 + sparse BM25 via RRF, k=60) — 95% context precision, <5% hallucination (RAGAS), and a 23% retrieval lift. Deployed as an interactive Streamlit app.",
+      stack: ["Python", "LlamaIndex", "ChromaDB", "Groq", "BM25", "RAGAS", "Streamlit"], when: "Apr 2026 – May 2026",
+      live: "https://advanced-rag-pipeline-app-rohit.streamlit.app",
     },
     {
       tag: "Generative · Vision", title: "Face-Generation-Diffusion",
       desc: "Custom diffusion model achieving 85% FID-score improvement, trained on 100,000+ images. Optimized pipeline for 70% faster inference via mixed-precision training and gradient checkpointing.",
       stack: ["PyTorch", "HuggingFace", "CUDA"], when: "Sep 2024 – Dec 2024",
+      repo: "https://github.com/rohitkumarmanne-442/Face-Generation-Diffusion",
     },
   ],
 
@@ -101,11 +120,14 @@ const DATA = {
 
 /* ---------- 1. Inject content ---------- */
 function buildSkills() {
-  document.getElementById("skillsGrid").innerHTML = DATA.skills.map(s => `
-    <div class="skill-card glass reveal">
-      <div class="skill-icon">${s.icon}</div>
-      <h3>${s.title}</h3>
-      <div class="chips">${s.items.map(i => `<span class="chip">${i}</span>`).join("")}</div>
+  document.getElementById("skillsGrid").innerHTML = DATA.skills.map((s, i) => `
+    <div class="skill-row glass reveal">
+      <div class="sr-head">
+        <span class="sr-index">${String(i + 1).padStart(2, "0")}</span>
+        <h3>${s.title}</h3>
+        <span class="sr-count">${s.items.length} tools</span>
+      </div>
+      <div class="chips">${s.items.map(it => `<span class="chip">${it}</span>`).join("")}</div>
     </div>`).join("");
 }
 function buildTimeline() {
@@ -153,7 +175,7 @@ function buildProjects() {
               <div class="fp-agent"><span class="fp-agent-dot"></span><span class="fp-agent-name">${name}</span><em class="fp-agent-model ${model.toLowerCase()}">${model}</em></div>`).join("")}
           </div>
           <div class="fp-pipeline">
-            <span>Dev</span><i>›</i><span>QE</span><i>›</i><span>Gate</span><i>›</i><span>Stage</span><i>›</i><span>Prod</span>
+            <span>Dev</span><i>›</i><span>QE</span><i>›</i><span>Test</span><i>›</i><span>Stage</span><i>›</i><span>Prod</span>
           </div>
         </aside>
       </article>`;
@@ -165,7 +187,13 @@ function buildProjects() {
       <h3>${p.title}</h3>
       <p>${p.desc}</p>
       <div class="project-stack">${p.stack.map(s => `<span class="chip">${s}</span>`).join("")}</div>
-      <span class="project-link">${p.when}</span>
+      <div class="project-foot">
+        <span class="project-when">${p.when}</span>
+        <span class="project-links">
+          ${p.live ? `<a href="${p.live}" target="_blank" rel="noopener" class="project-link">▶ Live</a>` : ""}
+          ${p.repo ? `<a href="${p.repo}" target="_blank" rel="noopener" class="project-link">⌥ Code</a>` : ""}
+        </span>
+      </div>
     </div>`).join("");
 }
 function buildLogoLoop() {
@@ -543,8 +571,8 @@ const KB = [
   { keys: ["healthkard","health assistant","generative ai engineer","chatbot","health"],
     answer: () => `At <strong>HealthKard</strong> (Generative AI Engineer, Jul 2024 – Jun 2025, Remote) he built a <strong>'Health Assistant' chatbot</strong> with LangChain + OpenAI/Claude guiding users from symptom analysis to doctor discovery, a production <strong>RAG architecture on ChromaDB</strong>, and applied prompt engineering + synthetic-data fine-tuning to reduce hallucinations.` },
 
-  { keys: ["capgemini","fraud","insurance","xgboost","mlops","ml engineer","first job","earlier"],
-    answer: () => `At <strong>Capgemini</strong> (AI/ML Engineer, Jun 2021 – Jul 2023, Hyderabad) he built production ML for <strong>insurance fraud detection</strong> with XGBoost — 10,000+ daily claims at <strong>88% accuracy</strong>, real-time inference on Flask/Docker/AWS (−40% detection time), an spaCy/Transformers NLP feedback pipeline (+30% prioritization), and a full <strong>MLOps CI/CD</strong> pipeline (Jenkins, Kubernetes/EKS, Terraform) — −80% deploy effort, 99.9% uptime.` },
+  { keys: ["capgemini","fraud","insurance","xgboost","mlops","ml engineer","first job","earlier","data scientist","intern","analyst"],
+    answer: () => `At <strong>Capgemini</strong> (Hyderabad, Jan 2021 – Jul 2023) Rohit grew across three roles:<br>• <strong>AI & ML Engineer</strong> — real-time fraud-detection microservice for AAA Auto Club (Flask/Docker, 10k+ claims/day, −40% flag time), spaCy/Transformers NLP at 92% accuracy, full MLOps CI/CD (−80% deploy effort, 99.9% uptime), Prometheus/Grafana + KL-divergence drift detection.<br>• <strong>Junior Data Scientist</strong> — XGBoost fraud model beating LR/RF baselines at <strong>88% accuracy, 0.94 AUC</strong>; deep feature engineering (+15% precision).<br>• <strong>Data Analyst Intern</strong> — Tableau Patient Readmission Risk dashboard on EHR data, saving 15+ hrs/week.` },
 
   { keys: ["rag","retrieval","retrieval augmented","graphrag","vector","embedding","hybrid search"],
     answer: () => `RAG is core to Rohit's work:<br>• <strong>Hilton</strong> — autonomous Agentic RAG with Pinecone + Redis, cut MTTR 50%.<br>• <strong>HealthKard</strong> — production RAG on ChromaDB with memory management.<br>• <strong>SEC Filings project</strong> — LlamaIndex + Groq, semantic chunking, hybrid search (dense + BM25), &lt;5% hallucination.<br>He also works with GraphRAG, Pinecone, ChromaDB, FAISS, Qdrant, and Neo4j.` },
@@ -553,7 +581,7 @@ const KB = [
     answer: () => `Agentic AI is his specialty: multi-agent orchestration with <strong>LangChain, CrewAI, AutoGen, DSPy</strong>; tool-use & API orchestration (Create/Modify/Cancel workflows); and planning/reasoning that breaks complex goals into sub-tasks. At Hilton he built the autonomous 'QE Agent' and multi-agent onboarding flows saving 20+ hrs/hire.` },
 
   { keys: ["skill","tech stack","technologies","stack","tools","languages","what do you know","expertise"],
-    answer: () => `Rohit's toolkit:<br><strong>Languages:</strong> Python (Expert), SQL, Java, JavaScript, Bash.<br><strong>AI/ML & GenAI:</strong> Advanced RAG, GraphRAG, LoRA fine-tuning, Function Calling, PyTorch, TensorFlow, XGBoost, Hugging Face.<br><strong>Agentic frameworks:</strong> LangChain, LlamaIndex, AutoGen, CrewAI, DSPy, FastAPI.<br><strong>Cloud/MLOps:</strong> AWS (SageMaker, Bedrock, EKS, Lambda, S3), Docker, K8s, Terraform, MLflow, vLLM, Ollama, Ragas, TruLens.<br><strong>Vector/DBs:</strong> Pinecone, ChromaDB, FAISS, Qdrant, Neo4j, PostgreSQL, MongoDB, Redis, Elasticsearch.` },
+    answer: () => `Rohit's toolkit:<br><strong>Languages:</strong> Python (Expert), SQL, Java, JavaScript, Bash.<br><strong>GenAI & Agentic AI:</strong> LangChain, LangGraph, LlamaIndex, CrewAI, AutoGen, DSPy, MCP, ReAct, Advanced/Graph/Agentic RAG, RAGAS, TruLens, LangSmith.<br><strong>LLMs & Fine-Tuning:</strong> GPT-4o, Claude (Opus/Sonnet), Llama 3, Mistral, LoRA, QLoRA, PEFT, RLHF.<br><strong>ML/DL:</strong> PyTorch, TensorFlow, Scikit-Learn, XGBoost, LightGBM, spaCy, drift detection.<br><strong>Cloud/MLOps:</strong> AWS (SageMaker, Bedrock, EKS, Lambda, S3), Docker, K8s, Terraform, Jenkins, GitHub Actions, MLflow, Airflow, Ray, vLLM, Ollama.<br><strong>Data & Serving:</strong> Pinecone, ChromaDB, FAISS, Qdrant, Neo4j, PostgreSQL, MongoDB, Redis, Elasticsearch, Kafka, FastAPI.` },
 
   { keys: ["python","programming language","coding"],
     answer: () => `Python is Rohit's <strong>expert language</strong>. He also works in SQL, Java, JavaScript and Bash/Shell.` },
@@ -562,10 +590,10 @@ const KB = [
     answer: () => `Cloud & MLOps: <strong>AWS</strong> (SageMaker, Bedrock, EKS, Lambda, S3), Docker, Kubernetes, Terraform, MLflow, Jenkins, plus LLM serving with <strong>vLLM</strong> and <strong>Ollama</strong>, and eval with Ragas & TruLens. He's run full CI/CD with 99.9% uptime.` },
 
   { keys: ["qd","qdev","orchestration","quality dev","sdlc","sdet","flagship","live project","building","in progress","current project","latest project","recent project","newest project","working on","new project","vercel","hitl","multi agent platform"],
-    answer: () => `🎛️ <strong>QD Orchestration</strong> is Rohit's flagship — a <strong>live, actively-building</strong> multi-agent SDLC + SDET platform. A Jira story key flows through <strong>5 Claude-powered agents</strong> (code-gen & review on Opus; test-gen, Playwright E2E & Splunk→Bug on Sonnet) across Test → Stage → Prod behind <strong>3 Human-in-the-Loop gates</strong>. Features a self-healing bug-fix loop, real-time WebSocket pipeline, a Monaco code viewer, and role-based Dev/QE/Lead/Admin workspaces. Stack: TypeScript/React + FastAPI/Python, SQLModel, deployed on Vercel + Render. <a href="https://qd-orchestrationai.vercel.app" target="_blank">▶ Live demo</a>` },
+    answer: () => `🎛️ <strong>QDev Orchestration</strong> is Rohit's flagship — a <strong>live, actively-building</strong> agentic SDLC platform. Stories flow Dev → QE → Test → Stage → Prod via <strong>6 specialized Claude agents</strong> (Manager, Dev, QE, Code Review, E2E, Splunk→Bug) behind <strong>3 Human-in-the-Loop gates</strong>, with a state-machine bug-fix loop. A hybrid routing layer uses <strong>Claude Sonnet 4.6</strong> by default and <strong>Opus 4.7</strong> for code-gen/reviews, streaming live state over WebSockets to a React/Vite/Tailwind + Monaco UI with 8+ integrations. Deployed on Vercel + Render. <a href="https://qd-orchestrationai.vercel.app" target="_blank">▶ Live demo</a>` },
 
   { keys: ["project","projects","portfolio","built","work samples","sec","diffusion","face"],
-    answer: () => `Rohit's projects:<br>⭐ <strong>QD Orchestration</strong> (live & in progress) — multi-agent SDLC+SDET platform with 5 Claude agents, HITL gates & realtime pipeline. <a href="https://qd-orchestrationai.vercel.app" target="_blank">Live ↗</a><br>1️⃣ <strong>Advanced RAG for SEC Filings</strong> — LlamaIndex + Groq, hybrid search, &lt;5% hallucination.<br>2️⃣ <strong>Face-Generation-Diffusion</strong> — custom PyTorch diffusion model, 85% FID improvement on 100k+ images.<br>See the <a href="#projects">Projects</a> section.` },
+    answer: () => `Rohit's projects:<br>⭐ <strong>QDev Orchestration</strong> (live & in progress) — agentic SDLC platform with 6 Claude agents, 3 HITL gates & a realtime WebSocket pipeline. <a href="https://qd-orchestrationai.vercel.app" target="_blank">Live ↗</a><br>1️⃣ <strong>Advanced Agentic RAG for SEC Filings</strong> — LlamaIndex + Groq Llama-3.1-70B, hybrid search (BM25+dense, RRF), 95% context precision, &lt;5% hallucination. <a href="https://advanced-rag-pipeline-app-rohit.streamlit.app" target="_blank">Live ↗</a><br>2️⃣ <strong>Face-Generation-Diffusion</strong> — custom PyTorch diffusion model, 85% FID improvement on 100k+ images.<br>See the <a href="#projects">Projects</a> section.` },
 
   { keys: ["education","degree","university","dayton","masters","study","gpa","school","vel tech","college"],
     answer: () => `🎓 <strong>M.S. Computer Science</strong>, University of Dayton (Aug 2023 – May 2025, GPA 3.3).<br>🎓 <strong>B.Tech, Electronics & Communication Engineering</strong>, Vel Tech University, Chennai (2017–2021, GPA 8.1).` },

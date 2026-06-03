@@ -197,12 +197,16 @@ strong { color: #fff; font-weight: 600; }
 .info-card strong { font-size: 1.05rem; }
 .info-card span:last-child { font-size: 0.85rem; color: var(--text-faint); }
 
-/* Skills */
-.skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
-.skill-card { padding: 26px; border-radius: var(--radius); transition: transform 0.3s var(--ease), border-color 0.3s; }
-.skill-card:hover { transform: translateY(-6px); border-color: var(--glass-hi); }
-.skill-icon { font-size: 1.6rem; margin-bottom: 12px; }
-.skill-card h3 { font-family: "Space Grotesk"; font-size: 1.1rem; margin-bottom: 16px; }
+/* Skills — professional category rows */
+.skills-grid { display: flex; flex-direction: column; gap: 14px; }
+.skill-row { position: relative; display: grid; grid-template-columns: 240px 1fr; gap: 28px; align-items: start; padding: 26px 30px 26px 32px; border-radius: 18px; overflow: hidden; transition: transform 0.3s var(--ease), border-color 0.3s; }
+.skill-row::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: linear-gradient(var(--c1), var(--c2)); opacity: 0.85; }
+.skill-row:hover { transform: translateX(5px); border-color: var(--glass-hi); }
+.sr-head { display: flex; flex-direction: column; gap: 5px; }
+.sr-index { font-family: "JetBrains Mono"; font-size: 0.78rem; color: var(--c2); letter-spacing: 1px; }
+.sr-head h3 { font-family: "Space Grotesk"; font-size: 1.18rem; line-height: 1.2; }
+.sr-count { font-family: "JetBrains Mono"; font-size: 0.72rem; color: var(--text-faint); }
+.skill-row .chips { align-content: flex-start; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { font-size: 0.78rem; padding: 6px 12px; border-radius: 9px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-brd); color: var(--text-dim); transition: 0.25s; }
 .chip:hover { color: #fff; border-color: var(--c2); background: rgba(24,216,224,0.08); }
@@ -231,7 +235,11 @@ strong { color: #fff; font-weight: 600; }
 .project-card h3 { font-family: "Space Grotesk"; font-size: 1.35rem; margin: 10px 0 12px; }
 .project-card p { color: var(--text-dim); font-size: 0.94rem; flex-grow: 1; }
 .project-stack { display: flex; flex-wrap: wrap; gap: 7px; margin: 18px 0; }
-.project-link { color: var(--c2); font-weight: 600; font-size: 0.9rem; margin-top: auto; }
+.project-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; }
+.project-when { font-size: 0.82rem; color: var(--text-faint); font-family: "JetBrains Mono"; }
+.project-links { display: flex; gap: 12px; }
+.project-link { color: var(--c2); font-weight: 600; font-size: 0.88rem; transition: 0.2s; }
+.project-link:hover { color: #fff; }
 
 /* ===== Featured project (QD Orchestration) ===== */
 .featured-project {
@@ -488,6 +496,7 @@ strong { color: #fff; font-weight: 600; }
   .hero-stats { grid-template-columns: repeat(2, 1fr); }
   .featured-project { grid-template-columns: 1fr; }
   .fp-side { border-left: none; border-top: 1px solid var(--glass-brd); }
+  .skill-row { grid-template-columns: 1fr; gap: 14px; padding: 22px 24px; }
 }
 @media (max-width: 560px) {
   .fp-highlights { grid-template-columns: 1fr; }
