@@ -21,7 +21,7 @@ const DATA = {
   ],
 
   skills: [
-    { icon: "🐍", title: "Languages", items: ["Python (Expert)", "SQL", "Java", "JavaScript", "Bash/Shell"] },
+    { icon: "🐍", title: "Languages", items: ["Python (Expert)", "SQL", "Java", "JavaScript", "TypeScript", "C++", "C", "R", "MATLAB", "Bash/Shell"] },
     { icon: "🧠", title: "AI/ML & GenAI", items: ["Advanced RAG", "GraphRAG", "Prompt Engineering", "Fine-Tuning (LoRA)", "Function Calling", "Hugging Face", "PyTorch", "TensorFlow", "Scikit-Learn", "XGBoost"] },
     { icon: "🤖", title: "Frameworks & Agentic AI", items: ["LangChain", "LlamaIndex", "AutoGen", "CrewAI", "DSPy", "FastAPI", "React Vite", "Spring Boot"] },
     { icon: "☁️", title: "Cloud, MLOps & Serving", items: ["AWS (SageMaker, Bedrock, EKS, Lambda, S3)", "Docker", "Kubernetes", "Terraform", "MLflow", "Jenkins", "vLLM", "Ollama", "Ragas", "TruLens"] },
@@ -49,10 +49,12 @@ const DATA = {
     {
       role: "AI/ML Engineer", company: "Capgemini", where: "Hyderabad, India", when: "Jun 2021 – Jul 2023",
       points: [
-        "Designed, built and deployed scalable production ML for insurance fraud detection with XGBoost & Python, scoring 10,000+ daily claims at 88% accuracy.",
-        "Architected end-to-end data pipelines and real-time inference microservices with Flask, Docker, and AWS (Lambda, S3), reducing fraud identification time by 40%.",
-        "Built an NLP pipeline with spaCy and Transformers to analyze customer feedback, improving response prioritization by 30%.",
-        "Established a full MLOps CI/CD pipeline with Jenkins, Kubernetes (Amazon EKS) and Terraform — cutting manual deployment effort by 80% with 99.9% uptime.",
+        "Owned the end-to-end ML lifecycle for an insurance fraud-detection platform — from data ingestion and feature engineering to deployment and monitoring — using XGBoost and Python to score 10,000+ claims daily at 88% accuracy.",
+        "Engineered robust feature pipelines over large, messy claims data with Pandas, NumPy and SQL, tackling class imbalance and data drift to keep precision high and false positives low in production.",
+        "Architected real-time inference microservices in Flask, containerized with Docker and deployed on AWS (Lambda, S3), cutting fraud-identification time by 40% and enabling decisions at the point of claim.",
+        "Built an NLP pipeline with spaCy and Hugging Face Transformers to mine customer feedback for sentiment and intent, improving response prioritization by 30%.",
+        "Established a full MLOps CI/CD pipeline (Jenkins, Kubernetes on Amazon EKS, Terraform IaC) with automated testing, containerized model serving and monitoring — reducing manual deployment effort by 80% and sustaining 99.9% uptime.",
+        "Partnered closely with data scientists, QA and business stakeholders to translate fraud-investigation requirements into measurable model objectives, and documented experiments and pipelines for reproducibility and audit.",
       ],
     },
   ],
