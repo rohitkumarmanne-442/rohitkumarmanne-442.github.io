@@ -152,6 +152,7 @@
         <span class="eyebrow">04 — Selected Work</span>
         <h2 class="section-title">Things I've <span class="gradient-text">shipped</span>.</h2>
       </div>
+      <div id="featuredProject"><!-- featured project injected by JS --></div>
       <div class="projects-grid" id="projectsGrid"><!-- injected by JS --></div>
     </section>
 
@@ -212,6 +213,8 @@
     <span class="chat-fab-pulse"></span>
   </button>
 
+  <div class="chat-backdrop" id="chatBackdrop"></div>
+
   <div class="chat-window glass" id="chatWindow" aria-hidden="true">
     <div class="chat-header">
       <div class="chat-avatar">
@@ -227,7 +230,9 @@
     <div class="chat-body" id="chatBody"></div>
     <div class="chat-suggestions" id="chatSuggestions"></div>
     <form class="chat-input-row" id="chatForm">
-      <input type="text" id="chatInput" placeholder="Ask about my experience, skills, projects…" autocomplete="off" />
+      <div class="input-glow">
+        <input type="text" id="chatInput" placeholder="Ask about Rohit's experience, skills, projects…" autocomplete="off" />
+      </div>
       <button type="submit" class="chat-send" aria-label="Send">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>

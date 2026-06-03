@@ -59,6 +59,25 @@ const DATA = {
 
   projects: [
     {
+      featured: true,
+      tag: "Flagship", status: "Live · Building in progress",
+      title: "QD Orchestration",
+      tagline: "Unified multi-agent SDLC + SDET platform for DEV & QE teams.",
+      desc: "A Jira story key goes in; specialist Claude-powered agents drive it through Test → Stage → Prod behind three Human-in-the-Loop approval gates — generating code, tests, bug tickets and deployments from a single story key. Real-time pipeline over WebSockets, a Monaco-backed code viewer, a self-healing bug-fix loop, and resume-after-approval checkpointing.",
+      highlights: [
+        ["🧠", "5 live Claude agents", "Code-gen & review on Opus; test-gen, Playwright E2E & Splunk→Bug on Sonnet"],
+        ["🚦", "3 HITL approval gates", "Role-based: Dev/QE → Test, Lead → Stage, Admin → Prod"],
+        ["🔁", "Self-healing bug loop", "Test failures feed back into the Dev agent until they pass"],
+        ["⚡", "Realtime over WebSocket", "Live pipeline + integration-health streaming"],
+      ],
+      agents: [["Code Generator","Opus"],["Code Reviewer","Opus"],["Test Case Generator","Sonnet"],["E2E Automation","Sonnet"],["Splunk → Bug","Sonnet"]],
+      stack: ["TypeScript", "React", "FastAPI", "Python", "WebSockets", "SQLModel", "Monaco", "Claude API", "Vercel", "Render"],
+      live: "https://qd-orchestrationai.vercel.app",
+      api: "https://qd-orchestration-api.onrender.com/docs",
+      repo: "https://github.com/rohitkumarmanne-442/Quality-Dev-Orchestration-AI",
+      when: "2025 – Present",
+    },
+    {
       tag: "RAG · Live Demo", title: "Advanced RAG for SEC Filings",
       desc: "Production-grade RAG for financial data retrieval using LlamaIndex + Groq, with semantic chunking, hybrid search (dense + sparse BM25), and a <5% hallucination rate. Interactive Streamlit app with live pipeline visualization & latency metrics.",
       stack: ["Python", "LlamaIndex", "ChromaDB", "Groq", "Streamlit"], when: "Apr 2025 – Present",
@@ -98,7 +117,47 @@ function buildTimeline() {
     </div>`).join("");
 }
 function buildProjects() {
-  document.getElementById("projectsGrid").innerHTML = DATA.projects.map(p => `
+  const featured = DATA.projects.find(p => p.featured);
+  const rest = DATA.projects.filter(p => !p.featured);
+
+  if (featured) {
+    document.getElementById("featuredProject").innerHTML = `
+      <article class="featured-project glass reveal">
+        <span class="fp-border"></span>
+        <div class="fp-main">
+          <div class="fp-badges">
+            <span class="fp-live"><span class="fp-live-dot"></span>LIVE</span>
+            <span class="fp-building">⚙ Building in progress</span>
+            <span class="fp-flag">★ Flagship project</span>
+          </div>
+          <h3 class="fp-title">${featured.title}</h3>
+          <p class="fp-tagline">${featured.tagline}</p>
+          <p class="fp-desc">${featured.desc}</p>
+          <div class="fp-highlights">
+            ${featured.highlights.map(([i, t, d]) => `
+              <div class="fp-hl"><span class="fp-hl-ico">${i}</span><div><strong>${t}</strong><span>${d}</span></div></div>`).join("")}
+          </div>
+          <div class="project-stack">${featured.stack.map(s => `<span class="chip">${s}</span>`).join("")}</div>
+          <div class="fp-actions">
+            <a href="${featured.live}" target="_blank" rel="noopener" class="btn btn-primary">▶ Live Demo</a>
+            <a href="${featured.api}" target="_blank" rel="noopener" class="btn btn-ghost">API Docs ↗</a>
+            <span class="fp-private" title="Source is a private repository">🔒 Private repo · ${featured.when}</span>
+          </div>
+        </div>
+        <aside class="fp-side">
+          <span class="fp-side-label">Live agents</span>
+          <div class="fp-agents">
+            ${featured.agents.map(([name, model]) => `
+              <div class="fp-agent"><span class="fp-agent-dot"></span><span class="fp-agent-name">${name}</span><em class="fp-agent-model ${model.toLowerCase()}">${model}</em></div>`).join("")}
+          </div>
+          <div class="fp-pipeline">
+            <span>Dev</span><i>›</i><span>QE</span><i>›</i><span>Gate</span><i>›</i><span>Stage</span><i>›</i><span>Prod</span>
+          </div>
+        </aside>
+      </article>`;
+  }
+
+  document.getElementById("projectsGrid").innerHTML = rest.map(p => `
     <div class="project-card glass reveal" data-tilt>
       <span class="project-tag">${p.tag}</span>
       <h3>${p.title}</h3>
@@ -388,22 +447,27 @@ const chatClear = document.getElementById("chatClear");
 const chatStatus = document.getElementById("chatStatus");
 const chatFoot = document.getElementById("chatFoot");
 
+const chatBackdrop = document.getElementById("chatBackdrop");
 let chatOpened = false;
 function openChat() {
   chatWindow.classList.add("open");
+  chatBackdrop.classList.add("open");
   chatFab.classList.add("hidden");
   chatWindow.setAttribute("aria-hidden", "false");
   if (!chatOpened) { chatOpened = true; greet(); }
-  setTimeout(() => chatInput.focus(), 300);
+  setTimeout(() => chatInput.focus(), 320);
 }
 function closeChat() {
   chatWindow.classList.remove("open");
+  chatBackdrop.classList.remove("open");
   chatFab.classList.remove("hidden");
   chatWindow.setAttribute("aria-hidden", "true");
 }
 chatFab.addEventListener("click", openChat);
 navChatBtn.addEventListener("click", openChat);
 chatClose.addEventListener("click", closeChat);
+chatBackdrop.addEventListener("click", closeChat);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && chatWindow.classList.contains("open")) closeChat(); });
 chatClear.addEventListener("click", () => {
   chatBody.innerHTML = "";
   if (typeof chatHistory !== "undefined") chatHistory.length = 0;
@@ -429,6 +493,25 @@ function hideTyping() { const t = document.getElementById("typingDots"); if (t) 
 function botReply(html) {
   showTyping();
   setTimeout(() => { hideTyping(); addMsg(html, "bot"); }, 500 + Math.random() * 400);
+}
+
+/* ----- Clickable contact logos (mail / LinkedIn / GitHub / call) ----- */
+const ICONS = {
+  mail: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>`,
+  linkedin: `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>`,
+  github: `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.25 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.62-5.49 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.7.82.58A12 12 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg>`,
+  phone: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+};
+function contactBarHTML() {
+  return `<div class="chat-contact">
+    <a class="cc-btn" href="mailto:${DATA.email}" title="Email Rohit">${ICONS.mail}<span>Email</span></a>
+    <a class="cc-btn" href="${DATA.linkedin}" target="_blank" rel="noopener" title="LinkedIn">${ICONS.linkedin}<span>LinkedIn</span></a>
+    <a class="cc-btn" href="${DATA.github}" target="_blank" rel="noopener" title="GitHub">${ICONS.github}<span>GitHub</span></a>
+    <a class="cc-btn" href="tel:+19372705164" title="Call Rohit">${ICONS.phone}<span>Call</span></a>
+  </div>`;
+}
+function isContactIntent(text) {
+  return /contact|email|e-mail|reach|hire|hiring|connect|linked\s?in|git\s?hub|phone|call|number|get in touch|résumé|resume|\bcv\b|recruit/i.test(text);
 }
 
 const SUGGESTIONS = [
@@ -476,8 +559,11 @@ const KB = [
   { keys: ["aws","cloud","sagemaker","bedrock","lambda","eks","docker","kubernetes","terraform","deploy","serving","vllm","ollama"],
     answer: () => `Cloud & MLOps: <strong>AWS</strong> (SageMaker, Bedrock, EKS, Lambda, S3), Docker, Kubernetes, Terraform, MLflow, Jenkins, plus LLM serving with <strong>vLLM</strong> and <strong>Ollama</strong>, and eval with Ragas & TruLens. He's run full CI/CD with 99.9% uptime.` },
 
+  { keys: ["qd","qdev","orchestration","quality dev","sdlc","sdet","flagship","live project","building","in progress","current project","vercel","hitl","multi agent platform"],
+    answer: () => `🎛️ <strong>QD Orchestration</strong> is Rohit's flagship — a <strong>live, actively-building</strong> multi-agent SDLC + SDET platform. A Jira story key flows through <strong>5 Claude-powered agents</strong> (code-gen & review on Opus; test-gen, Playwright E2E & Splunk→Bug on Sonnet) across Test → Stage → Prod behind <strong>3 Human-in-the-Loop gates</strong>. Features a self-healing bug-fix loop, real-time WebSocket pipeline, a Monaco code viewer, and role-based Dev/QE/Lead/Admin workspaces. Stack: TypeScript/React + FastAPI/Python, SQLModel, deployed on Vercel + Render. <a href="https://qd-orchestrationai.vercel.app" target="_blank">▶ Live demo</a>` },
+
   { keys: ["project","projects","portfolio","built","work samples","sec","diffusion","face"],
-    answer: () => `Selected projects:<br>1️⃣ <strong>Advanced RAG for SEC Filings</strong> — LlamaIndex + Groq, semantic chunking, hybrid search (dense+BM25), &lt;5% hallucination, live Streamlit app.<br>2️⃣ <strong>Face-Generation-Diffusion</strong> — custom PyTorch diffusion model, 85% FID improvement on 100k+ images, 70% faster inference via mixed-precision + gradient checkpointing.<br>See the <a href="#projects">Projects</a> and <a href="#repos">GitHub</a> sections too.` },
+    answer: () => `Rohit's projects:<br>⭐ <strong>QD Orchestration</strong> (live & in progress) — multi-agent SDLC+SDET platform with 5 Claude agents, HITL gates & realtime pipeline. <a href="https://qd-orchestrationai.vercel.app" target="_blank">Live ↗</a><br>1️⃣ <strong>Advanced RAG for SEC Filings</strong> — LlamaIndex + Groq, hybrid search, &lt;5% hallucination.<br>2️⃣ <strong>Face-Generation-Diffusion</strong> — custom PyTorch diffusion model, 85% FID improvement on 100k+ images.<br>See the <a href="#projects">Projects</a> section.` },
 
   { keys: ["education","degree","university","dayton","masters","study","gpa","school","vel tech","college"],
     answer: () => `🎓 <strong>M.S. Computer Science</strong>, University of Dayton (Aug 2023 – May 2025, GPA 3.3).<br>🎓 <strong>B.Tech, Electronics & Communication Engineering</strong>, Vel Tech University, Chennai (2017–2021, GPA 8.1).` },
@@ -489,7 +575,7 @@ const KB = [
     answer: () => `🏆 Winner, <strong>Smart India Hackathon '20</strong> (ML Crime Mapping)<br>🏆 Winner, <strong>CodeFest '21</strong> (Disaster Management)<br>🥈 2nd Place, <strong>Bonjour India '17</strong> (French Embassy Robotics Competition).` },
 
   { keys: ["contact","email","reach","hire","phone","call","get in touch","connect","linkedin","github"],
-    answer: () => `Let's connect!<br>✉ <a href="mailto:${DATA.email}">${DATA.email}</a><br>📞 ${DATA.phone}<br>in <a href="${DATA.linkedin}" target="_blank">LinkedIn</a><br>⌥ <a href="${DATA.github}" target="_blank">GitHub</a>` },
+    answer: () => `You can reach Rohit directly using the buttons below 👇${contactBarHTML()}` },
 
   { keys: ["location","where based","relocate","memphis","move","remote"],
     answer: () => `Rohit is based in <strong>Memphis, TN</strong> and is <strong>open to relocation</strong>. He's also worked fully remote (HealthKard).` },
@@ -557,13 +643,14 @@ CERTIFICATIONS: ${DATA.certs.join("; ")}
 ACHIEVEMENTS: ${DATA.achievements.join("; ")}`;
 }
 
-const SYSTEM_PROMPT = `You are Rohit Kumar Manne's personal AI portfolio assistant, embedded on his website. You answer questions from recruiters and visitors about Rohit, using ONLY the résumé facts below.
+const SYSTEM_PROMPT = `You are the personal AI portfolio assistant for Rohit Kumar Manne, embedded on his website. You help recruiters and visitors learn about Rohit using ONLY the facts in the RÉSUMÉ block below.
 
-Rules:
-- Speak about Rohit in a warm, confident, professional first-person-of-the-assistant voice (e.g. "Rohit built…", "He specializes in…").
-- Be concise: 2–5 sentences or a short bulleted list. Use simple HTML (<strong>, <br>, <a>, • ) — NOT markdown.
-- Only use facts from the résumé. If something isn't covered, say so briefly and point them to ${DATA.email}. Never invent employers, dates, or numbers.
-- For contact requests, share email ${DATA.email}, phone ${DATA.phone}, and his LinkedIn/GitHub links.
+STRICT RULES — follow exactly:
+1. ACCURACY / NO HALLUCINATION: Use ONLY facts that appear verbatim in the RÉSUMÉ block. NEVER invent, assume, or estimate employers, job titles, dates, metrics, tools, certifications, or projects. If the answer is not in the résumé, reply exactly: "That detail isn't in Rohit's résumé — feel free to ask him directly using the buttons below." Do not speculate or fill gaps.
+2. VOICE: Warm, confident, professional. Refer to Rohit in the third person ("Rohit built…", "He specializes in…").
+3. LENGTH: Keep it tight — 2 to 4 short sentences, or up to 4 "- " bullets. No filler.
+4. FORMAT: Output PLAIN TEXT ONLY. Do NOT write HTML tags, code blocks, backticks, or markdown tables. You may use **bold** and "- " bullets sparingly.
+5. CONTACT: Do NOT type out email addresses, phone numbers, or URLs. If asked how to reach Rohit, reply with one short line such as "You can reach Rohit using the buttons below." The website renders clickable contact buttons automatically.
 
 === RÉSUMÉ ===
 ${buildResumeContext()}
@@ -597,8 +684,15 @@ async function askGroq(userText) {
   return text.trim();
 }
 
-// Lightweight, safe markdown -> HTML for LLM replies (models often emit markdown)
+// Safe text -> HTML for LLM replies. Down-converts any stray HTML to markdown
+// first (so tags never show as raw code), then escapes, then renders markdown.
 function formatReply(s) {
+  // 1) If the model emitted HTML, turn the safe bits into markdown, strip the rest
+  s = s.replace(/<a\s+[^>]*href=["']([^"']+)["'][^>]*>(.*?)<\/a>/gi, "[$2]($1)");
+  s = s.replace(/<\/?(?:strong|b)>/gi, "**");
+  s = s.replace(/<br\s*\/?>/gi, "\n");
+  s = s.replace(/<\/?[a-z][^>]*>/gi, ""); // strip any remaining tags
+  // 2) Escape, then render a safe subset of markdown
   s = s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   s = s.replace(/(^|[^*])\*(?!\s)([^*]+?)\*/g, "$1<em>$2</em>");
@@ -621,7 +715,9 @@ async function handleQuery(text) {
       const reply = await askGroq(text);
       hideTyping();
       chatHistory.push({ role: "user", content: text }, { role: "assistant", content: reply });
-      addMsg(formatReply(reply), "bot");
+      let html = formatReply(reply);
+      if (isContactIntent(text)) html += contactBarHTML();
+      addMsg(html, "bot");
       return;
     } catch (err) {
       // fall through to local KB
