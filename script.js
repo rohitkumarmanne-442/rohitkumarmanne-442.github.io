@@ -620,7 +620,7 @@ function findAnswer(query) {
 // Public Cloudflare Worker endpoint that proxies Groq (the API KEY lives inside
 // the Worker as a secret, never here). Safe to commit — this URL is not a secret.
 // Paste your deployed Worker URL here to turn on the live thinking-agent.
-const DEFAULT_PROXY_URL = "";
+const DEFAULT_PROXY_URL = "https://rohit-agent.rohitkumarmanne442.workers.dev";
 
 const CFG = window.AGENT_CONFIG || {};
 const PROXY_URL = (CFG.groqProxyUrl || DEFAULT_PROXY_URL || "").trim();
