@@ -1,0 +1,8 @@
+# Secrets — never commit
+config.js
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+*.log

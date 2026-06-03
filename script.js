@@ -107,10 +107,26 @@ function buildProjects() {
       <span class="project-link">${p.when}</span>
     </div>`).join("");
 }
-function buildMarquee() {
-  const items = ["Agentic AI","RAG","LangChain","Amazon Bedrock","Pinecone","CrewAI","PyTorch","LlamaIndex","Claude","FastAPI","Kubernetes","Vector Search","Fine-Tuning","MLOps","Hugging Face"];
-  const row = items.map(i => `<span class="marquee-item">${i}</span>`).join("");
-  document.getElementById("marqueeTrack").innerHTML = row + row; // duplicated for seamless loop
+function buildLogoLoop() {
+  // Real brand logos via simpleicons CDN (auto brand color). slug -> label
+  const logos = [
+    ["python", "Python"], ["pytorch", "PyTorch"], ["tensorflow", "TensorFlow"],
+    ["langchain", "LangChain"], ["huggingface", "Hugging Face"], ["openai", "OpenAI"],
+    ["amazonwebservices", "AWS"], ["docker", "Docker"], ["kubernetes", "Kubernetes"],
+    ["fastapi", "FastAPI"], ["react", "React"], ["redis", "Redis"],
+    ["mongodb", "MongoDB"], ["postgresql", "PostgreSQL"], ["elasticsearch", "Elastic"],
+    ["neo4j", "Neo4j"], ["pandas", "Pandas"], ["numpy", "NumPy"],
+    ["scikitlearn", "scikit-learn"], ["streamlit", "Streamlit"], ["terraform", "Terraform"],
+    ["jenkins", "Jenkins"], ["ollama", "Ollama"], ["googlecolab", "Colab"],
+  ];
+  const item = ([slug, label]) =>
+    `<a class="logoloop__item" href="#skills" title="${label}">
+       <img src="https://cdn.simpleicons.org/${slug}" alt="${label}" loading="lazy"
+            onerror="this.style.display='none'" />
+       <span>${label}</span>
+     </a>`;
+  const row = logos.map(item).join("");
+  document.getElementById("logoLoopTrack").innerHTML = row + row; // duplicated for seamless loop
 }
 function buildRecognition() {
   const cards = [
@@ -129,7 +145,7 @@ function buildRecognition() {
       <p>${c.p}</p>
     </div>`).join("");
 }
-buildSkills(); buildTimeline(); buildProjects(); buildMarquee(); buildRecognition();
+buildSkills(); buildTimeline(); buildProjects(); buildLogoLoop(); buildRecognition();
 document.getElementById("year").textContent = new Date().getFullYear();
 
 /* Word-by-word reveal: wrap words in each section title */
@@ -160,19 +176,37 @@ const wordIO = new IntersectionObserver((entries) => {
 document.querySelectorAll(".section-title").forEach(t => wordIO.observe(t));
 
 /* ---------- 2. Live GitHub repos ---------- */
+// Curated descriptions so EVERY project shows a meaningful summary (used when
+// the GitHub description is empty, or to improve a thin one). Keyed by repo name.
+const REPO_DESCRIPTIONS = {
+  "Advanced-RAG-Pipeline-for-Industry-Specific-Data": "Production-grade Retrieval-Augmented Generation pipeline for industry-specific corpora — semantic chunking, hybrid dense + sparse retrieval, and grounded, low-hallucination answers.",
+  "ShopSmart-AI-Sprint": "An AI-powered smart shopping assistant built during a rapid sprint — LLM-driven product discovery, comparison, and recommendations.",
+  "Quality-Dev-Orchestration-AI": "Agentic SDLC + SDET platform: a multi-agent pipeline (FastAPI + React) that orchestrates quality engineering with human-in-the-loop gates.",
+  "Face-Generation-Diffusion": "PyTorch diffusion model for generating and blending facial features across demographics using the FairFace dataset — 85% FID improvement.",
+  "healthkard-frontend": "React frontend for HealthKard — a healthcare subscription platform offering zero-fee doctor consultations across a trusted hospital network.",
+  "healthkard-backend": "Backend services for HealthKard's healthcare subscription platform — APIs for consultations, subscriptions, and hospital network management.",
+  "HOME360-A-Home-Services-Company": "Python/Django home-services booking platform with a React frontend — real-time scheduling, payments, and multi-role user management.",
+};
+function repoDescription(r) {
+  return REPO_DESCRIPTIONS[r.name] || r.description ||
+    `A ${r.language || "software"} project by Rohit — explore the code and docs on GitHub.`;
+}
 async function loadRepos() {
   const grid = document.getElementById("reposGrid");
-  const langColors = { Python:"#3572A5", JavaScript:"#f1e05a", "Jupyter Notebook":"#DA5B0B", HTML:"#e34c26", TypeScript:"#3178c6", Java:"#b07219", CSS:"#563d7c" };
+  const langColors = { Python:"#3776AB", JavaScript:"#f1e05a", "Jupyter Notebook":"#DA5B0B", HTML:"#e34c26", TypeScript:"#3178c6", Java:"#b07219", CSS:"#563d7c", Dockerfile:"#2496ED" };
   try {
     const res = await fetch(`https://api.github.com/users/${DATA.githubUser}/repos?sort=updated&per_page=100`);
     if (!res.ok) throw new Error("GitHub API");
     let repos = await res.json();
-    repos = repos.filter(r => !r.fork).sort((a,b) => b.stargazers_count - a.stargazers_count || new Date(b.updated_at) - new Date(a.updated_at)).slice(0, 6);
+    repos = repos
+      .filter(r => !r.fork && r.name.toLowerCase() !== DATA.githubUser.toLowerCase()) // drop profile repo
+      .sort((a,b) => b.stargazers_count - a.stargazers_count || new Date(b.updated_at) - new Date(a.updated_at))
+      .slice(0, 6);
     if (!repos.length) { grid.innerHTML = `<div class="repo-error glass">No public repositories found yet. <a href="${DATA.github}" target="_blank" style="color:var(--c2)">Visit GitHub ↗</a></div>`; return; }
     grid.innerHTML = repos.map(r => `
       <a href="${r.html_url}" target="_blank" rel="noopener" class="repo-card glass reveal">
         <span class="repo-name">📦 ${r.name}</span>
-        <span class="repo-desc">${r.description ? r.description : "No description provided."}</span>
+        <span class="repo-desc">${repoDescription(r)}</span>
         <div class="repo-meta">
           ${r.language ? `<span class="repo-lang"><span class="lang-dot" style="background:${langColors[r.language]||'#7c5cff'}"></span>${r.language}</span>` : ""}
           <span>★ ${r.stargazers_count}</span>
@@ -181,7 +215,15 @@ async function loadRepos() {
       </a>`).join("");
     revealObserve();
   } catch (e) {
-    grid.innerHTML = `<div class="repo-error glass">Couldn't load repos live (rate limit or network). <a href="${DATA.github}" target="_blank" style="color:var(--c2)">Browse them on GitHub ↗</a></div>`;
+    // Fallback: render curated projects so the section is never empty
+    const fallback = Object.entries(REPO_DESCRIPTIONS).filter(([n]) => n !== "Quality-Dev-Orchestration-AI").slice(0, 6);
+    grid.innerHTML = fallback.map(([name, desc]) => `
+      <a href="https://github.com/${DATA.githubUser}/${name}" target="_blank" rel="noopener" class="repo-card glass reveal">
+        <span class="repo-name">📦 ${name}</span>
+        <span class="repo-desc">${desc}</span>
+        <div class="repo-meta"><span>↗ View on GitHub</span></div>
+      </a>`).join("");
+    revealObserve();
   }
 }
 loadRepos();
@@ -208,14 +250,12 @@ const heroInner = document.querySelector(".hero-inner");
 const horizon = document.getElementById("recognition");
 const horizonTrack = document.getElementById("horizonTrack");
 const horizonBar = document.getElementById("horizonBar");
-const marqueeTrack = document.getElementById("marqueeTrack");
 const speedEls = [...document.querySelectorAll("[data-speed]")];
 
 let lastScroll = window.scrollY, ticking = false;
 
 function onScrollFrame() {
   const y = window.scrollY;
-  const velocity = y - lastScroll;
   lastScroll = y;
 
   /* 1. Hero parallax — content drifts up, fades & scales as you leave */
@@ -235,13 +275,7 @@ function onScrollFrame() {
     if (horizonBar) horizonBar.style.width = (progress * 100) + "%";
   }
 
-  /* 3. Marquee skew based on scroll velocity */
-  if (marqueeTrack) {
-    const skew = Math.max(-8, Math.min(8, velocity * 0.4));
-    marqueeTrack.style.setProperty("--skew", skew + "deg");
-  }
-
-  /* 4. Generic parallax for data-speed elements */
+  /* 3. Generic parallax for data-speed elements */
   speedEls.forEach(el => {
     const speed = parseFloat(el.dataset.speed);
     const mid = el.getBoundingClientRect().top + window.scrollY + el.offsetHeight / 2;
@@ -255,12 +289,6 @@ window.addEventListener("scroll", () => {
   if (!ticking) { ticking = true; requestAnimationFrame(onScrollFrame); }
 }, { passive: true });
 onScrollFrame();
-/* reset marquee skew when scrolling stops */
-let skewTimer;
-window.addEventListener("scroll", () => {
-  clearTimeout(skewTimer);
-  skewTimer = setTimeout(() => marqueeTrack && marqueeTrack.style.setProperty("--skew", "0deg"), 120);
-}, { passive: true });
 
 /* Reveal on scroll */
 let revealIO;
@@ -306,19 +334,37 @@ document.addEventListener("mousemove", (e) => {
   card.style.setProperty("--my", (e.clientY - r.top) + "px");
 });
 
-/* Typed role text */
-const typedEl = document.getElementById("typed");
-(function typeLoop() {
-  let i = 0, j = 0, deleting = false;
-  function tick() {
-    const word = DATA.roles[i];
-    typedEl.textContent = word.substring(0, j);
-    if (!deleting && j < word.length) { j++; setTimeout(tick, 70); }
-    else if (!deleting && j === word.length) { deleting = true; setTimeout(tick, 1600); }
-    else if (deleting && j > 0) { j--; setTimeout(tick, 35); }
-    else { deleting = false; i = (i + 1) % DATA.roles.length; setTimeout(tick, 300); }
+/* RotatingText — staggered character rotation (vanilla, React Bits style) */
+const rotatingEl = document.getElementById("rotatingText");
+(function rotatingText() {
+  const phrases = ["Agentic AI", "RAG Pipelines", "Autonomous Agents", "GenAI Apps", "ML Systems"];
+  let idx = 0;
+  const STAGGER = 28, ENTER = 500, HOLD = 1700;
+
+  function render(text) {
+    rotatingEl.innerHTML = "";
+    const chars = [...text];
+    chars.forEach((ch, i) => {
+      const s = document.createElement("span");
+      s.className = "rt-char";
+      s.textContent = ch === " " ? " " : ch;
+      rotatingEl.appendChild(s);
+      // stagger IN from last char (staggerFrom: "last")
+      setTimeout(() => s.classList.add("in"), (chars.length - 1 - i) * STAGGER);
+    });
+    return chars.length;
   }
-  tick();
+  function cycle() {
+    const text = phrases[idx];
+    const n = render(text);
+    const total = n * STAGGER + ENTER;
+    setTimeout(() => {
+      // stagger OUT
+      [...rotatingEl.children].forEach((s, i) => setTimeout(() => { s.classList.remove("in"); s.classList.add("out"); }, i * STAGGER));
+      setTimeout(() => { idx = (idx + 1) % phrases.length; cycle(); }, n * STAGGER + 400);
+    }, total + HOLD);
+  }
+  cycle();
 })();
 
 /* Mobile menu */
@@ -338,6 +384,9 @@ const chatForm = document.getElementById("chatForm");
 const chatInput = document.getElementById("chatInput");
 const chatSuggest = document.getElementById("chatSuggestions");
 const navChatBtn = document.getElementById("navChatBtn");
+const chatClear = document.getElementById("chatClear");
+const chatStatus = document.getElementById("chatStatus");
+const chatFoot = document.getElementById("chatFoot");
 
 let chatOpened = false;
 function openChat() {
@@ -355,6 +404,11 @@ function closeChat() {
 chatFab.addEventListener("click", openChat);
 navChatBtn.addEventListener("click", openChat);
 chatClose.addEventListener("click", closeChat);
+chatClear.addEventListener("click", () => {
+  chatBody.innerHTML = "";
+  if (typeof chatHistory !== "undefined") chatHistory.length = 0;
+  greet();
+});
 
 function addMsg(html, who) {
   const m = document.createElement("div");
@@ -390,7 +444,7 @@ function renderSuggestions() {
 renderSuggestions();
 
 function greet() {
-  botReply(`Hi! I'm <strong>Rohit's AI agent</strong> 👋 — trained on his résumé. Ask me anything about his experience, skills, projects, or how to reach him. Try a suggestion below 👇`);
+  botReply(`Hi! I'm <strong>Rohit's AI agent</strong> 👋 — I know his résumé inside out. Ask me anything about his experience, skills, projects, or how to reach him. Try a suggestion below 👇`);
 }
 
 /* ----- Intent knowledge base (scored keyword retrieval) ----- */
@@ -474,11 +528,111 @@ function findAnswer(query) {
   return null;
 }
 
-function handleQuery(text) {
+/* ----- Groq LLM integration (with résumé system prompt) ----- */
+const CFG = window.AGENT_CONFIG || {};
+const AGENT_MODE = CFG.groqProxyUrl ? "proxy" : (CFG.groqApiKey ? "direct" : "local");
+
+function buildResumeContext() {
+  const exp = DATA.experience.map(e =>
+    `- ${e.role}, ${e.company} (${e.where}, ${e.when}):\n  ${e.points.join("\n  ")}`).join("\n");
+  const proj = DATA.projects.map(p => `- ${p.title} [${p.stack.join(", ")}] (${p.when}): ${p.desc}`).join("\n");
+  const edu = DATA.education.map(e => `- ${e.deg}, ${e.school} (${e.when}, GPA ${e.gpa})`).join("\n");
+  const skills = DATA.skills.map(s => `- ${s.title}: ${s.items.join(", ")}`).join("\n");
+  return `RÉSUMÉ OF ${DATA.name} (${DATA.title}), ${DATA.location}
+Email: ${DATA.email} | Phone: ${DATA.phone} | LinkedIn: ${DATA.linkedin} | GitHub: ${DATA.github}
+
+EDUCATION:
+${edu}
+
+SKILLS:
+${skills}
+
+WORK EXPERIENCE:
+${exp}
+
+PROJECTS:
+${proj}
+
+CERTIFICATIONS: ${DATA.certs.join("; ")}
+ACHIEVEMENTS: ${DATA.achievements.join("; ")}`;
+}
+
+const SYSTEM_PROMPT = `You are Rohit Kumar Manne's personal AI portfolio assistant, embedded on his website. You answer questions from recruiters and visitors about Rohit, using ONLY the résumé facts below.
+
+Rules:
+- Speak about Rohit in a warm, confident, professional first-person-of-the-assistant voice (e.g. "Rohit built…", "He specializes in…").
+- Be concise: 2–5 sentences or a short bulleted list. Use simple HTML (<strong>, <br>, <a>, • ) — NOT markdown.
+- Only use facts from the résumé. If something isn't covered, say so briefly and point them to ${DATA.email}. Never invent employers, dates, or numbers.
+- For contact requests, share email ${DATA.email}, phone ${DATA.phone}, and his LinkedIn/GitHub links.
+
+=== RÉSUMÉ ===
+${buildResumeContext()}
+=== END RÉSUMÉ ===`;
+
+const chatHistory = [];
+
+async function askGroq(userText) {
+  const messages = [
+    { role: "system", content: SYSTEM_PROMPT },
+    ...chatHistory.slice(-6),
+    { role: "user", content: userText },
+  ];
+  let data;
+  if (AGENT_MODE === "proxy") {
+    const r = await fetch(CFG.groqProxyUrl, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages, model: CFG.model }),
+    });
+    data = await r.json();
+  } else {
+    const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${CFG.groqApiKey}` },
+      body: JSON.stringify({ model: CFG.model || "llama-3.3-70b-versatile", messages, temperature: 0.4, max_tokens: 600 }),
+    });
+    data = await r.json();
+  }
+  const text = data?.choices?.[0]?.message?.content;
+  if (!text) throw new Error("No content from Groq");
+  return text.trim();
+}
+
+// Lightweight, safe markdown -> HTML for LLM replies (models often emit markdown)
+function formatReply(s) {
+  s = s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  s = s.replace(/(^|[^*])\*(?!\s)([^*]+?)\*/g, "$1<em>$2</em>");
+  s = s.replace(/`([^`]+?)`/g, "<code>$1</code>");
+  s = s.replace(/\[(.+?)\]\((https?:[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  s = s.replace(/(^|\s)(https?:\/\/[^\s<]+)/g, '$1<a href="$2" target="_blank" rel="noopener">$2</a>');
+  s = s.replace(/([\w.+-]+@[\w-]+\.[\w.-]+)/g, '<a href="mailto:$1">$1</a>');
+  s = s.replace(/^[\-•]\s?(.+)$/gm, "• $1");
+  s = s.replace(/\n/g, "<br>");
+  return s;
+}
+
+async function handleQuery(text) {
   addMsg(text, "user");
+  showTyping();
+
+  // Try the live LLM first (if configured); always fall back to the local KB.
+  if (AGENT_MODE !== "local") {
+    try {
+      const reply = await askGroq(text);
+      hideTyping();
+      chatHistory.push({ role: "user", content: text }, { role: "assistant", content: reply });
+      addMsg(formatReply(reply), "bot");
+      return;
+    } catch (err) {
+      // fall through to local KB
+    }
+  }
+
+  await new Promise(r => setTimeout(r, 350 + Math.random() * 300));
+  hideTyping();
   const ans = findAnswer(text);
-  if (ans) botReply(ans);
-  else botReply(`I'm focused on Rohit's professional background. I didn't quite catch that — try asking about his <strong>experience</strong>, <strong>RAG/agentic work</strong>, <strong>skills</strong>, <strong>projects</strong>, <strong>education</strong>, or <strong>contact info</strong>. Or just reach him at <a href="mailto:${DATA.email}">${DATA.email}</a>.`);
+  if (ans) addMsg(ans, "bot");
+  else addMsg(`I'm focused on Rohit's professional background. Try asking about his <strong>experience</strong>, <strong>RAG / agentic work</strong>, <strong>skills</strong>, <strong>projects</strong>, <strong>education</strong>, or <strong>contact info</strong>. Or reach him at <a href="mailto:${DATA.email}">${DATA.email}</a>.`, "bot");
 }
 
 chatForm.addEventListener("submit", (e) => {
@@ -488,3 +642,13 @@ chatForm.addEventListener("submit", (e) => {
   chatInput.value = "";
   handleQuery(text);
 });
+
+/* Reflect the active agent mode in the chat UI */
+(function applyAgentMode() {
+  if (AGENT_MODE === "local") return; // built-in agent (default text is correct)
+  if (chatStatus) chatStatus.textContent = "Powered by Groq LLM";
+  if (chatFoot) {
+    chatFoot.innerHTML = `⚡ Live AI · Groq <strong>${CFG.model || "llama-3.3-70b"}</strong>${AGENT_MODE === "proxy" ? " (secure)" : ""}`;
+    chatFoot.classList.add("live");
+  }
+})();

@@ -26,9 +26,11 @@
   <!-- Scroll progress -->
   <div class="scroll-progress" id="scrollProgress"></div>
 
-  <!-- Navigation -->
+  <!-- Brand logo — fixed top-left corner -->
+  <a href="#hero" class="brand-logo glass">RKM<span>.</span></a>
+
+  <!-- Navigation — centered -->
   <nav class="nav glass" id="nav">
-    <a href="#hero" class="nav-logo">RKM<span>.</span></a>
     <ul class="nav-links">
       <li><a href="#about" class="nav-link">About</a></li>
       <li><a href="#skills" class="nav-link">Skills</a></li>
@@ -38,9 +40,13 @@
       <li><a href="#repos" class="nav-link">GitHub</a></li>
       <li><a href="#contact" class="nav-link">Contact</a></li>
     </ul>
-    <button class="nav-cta" id="navChatBtn">Ask my AI ✦</button>
     <button class="nav-burger" id="navBurger" aria-label="Menu"><span></span><span></span><span></span></button>
   </nav>
+
+  <!-- Ask-my-AI floating button (ShinyText) -->
+  <button class="ask-ai-btn glass" id="navChatBtn">
+    <span class="shiny-text" data-shiny>Ask my AI</span> <span class="ask-spark">✦</span>
+  </button>
 
   <!-- Hero -->
   <header class="hero" id="hero">
@@ -53,7 +59,8 @@
         <span class="gradient-text">Manne</span>
       </h1>
       <p class="hero-role reveal">
-        <span class="typed" id="typed"></span><span class="caret">|</span>
+        <span class="rt-label">I build</span>
+        <span class="rotating-text" id="rotatingText" aria-live="polite"></span>
       </p>
       <p class="hero-sub reveal">
         I architect <strong>agentic AI systems</strong>, production-grade <strong>RAG pipelines</strong>,
@@ -75,9 +82,9 @@
     </a>
   </header>
 
-  <!-- Infinite marquee tech strip -->
-  <div class="marquee" id="marquee">
-    <div class="marquee-track" id="marqueeTrack"><!-- injected by JS --></div>
+  <!-- LogoLoop — infinite tech logo strip (real brand colors) -->
+  <div class="logoloop logoloop--fade" id="logoLoop" role="region" aria-label="Technologies I use">
+    <div class="logoloop__track" id="logoLoopTrack"><!-- injected by JS --></div>
   </div>
 
   <main>
@@ -211,9 +218,10 @@
         <span class="chat-avatar-ring"></span>R
       </div>
       <div class="chat-id">
-        <strong>Rohit's AI Agent</strong>
-        <span><span class="online-dot"></span>Trained on my resume</span>
+        <strong class="shiny-text" data-shiny>Rohit's AI Agent</strong>
+        <span><span class="online-dot"></span><span id="chatStatus">Trained on my résumé</span></span>
       </div>
+      <button class="chat-clear" id="chatClear" aria-label="Clear chat" title="New chat">⟳</button>
       <button class="chat-close" id="chatClose" aria-label="Close">✕</button>
     </div>
     <div class="chat-body" id="chatBody"></div>
@@ -224,8 +232,11 @@
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </form>
+    <div class="chat-foot" id="chatFoot">⚡ Powered by built-in résumé agent</div>
   </div>
 
+  <!-- config.js is gitignored (holds local Groq key); absent on the public site -->
+  <script src="config.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
