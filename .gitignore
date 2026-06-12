@@ -1,6 +1,16 @@
 # Secrets — never commit
 config.js
 
+# Dependencies
+node_modules/
+
+# Local Claude Code skill (dev tooling, not part of the website)
+.claude/
+
+# Python cache (from the ui-ux-pro-max skill scripts)
+__pycache__/
+*.pyc
+
 # OS / editor
 .DS_Store
 Thumbs.db
