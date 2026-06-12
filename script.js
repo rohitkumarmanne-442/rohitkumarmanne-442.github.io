@@ -91,7 +91,7 @@ const DATA = {
       ],
       agents: [["Manager","Sonnet"],["Dev · Code-Gen","Opus"],["QE · Test Cases","Sonnet"],["Code Review","Opus"],["E2E Automation","Sonnet"],["Splunk → Bug","Sonnet"]],
       stack: ["TypeScript", "React Vite", "Tailwind", "FastAPI", "Python", "WebSockets", "Monaco", "Claude Opus/Sonnet", "Vercel", "Render"],
-      live: "https://qd-orchestrationai.vercel.app",
+      live: "https://www.qdevorchestration-ai.com/",
       api: "https://qd-orchestration-api.onrender.com/docs",
       repo: "https://github.com/rohitkumarmanne-442/Quality-Dev-Orchestration-AI",
       when: "May 2026 – Present",
@@ -141,63 +141,46 @@ function buildTimeline() {
     </div>`).join("");
 }
 function buildProjects() {
-  const featured = DATA.projects.find(p => p.featured);
-  const rest = DATA.projects.filter(p => !p.featured);
+  // Sticky-stacking cards (featured first) — scaled on scroll by fx.js
+  const ordered = [DATA.projects.find(p => p.featured), ...DATA.projects.filter(p => !p.featured)].filter(Boolean);
 
-  if (featured) {
-    document.getElementById("featuredProject").innerHTML = `
-      <article class="featured-project glass reveal">
-        <span class="fp-border"></span>
-        <div class="fp-main">
-          <div class="fp-badges">
-            <span class="fp-live"><span class="fp-live-dot"></span>LIVE</span>
-            <span class="fp-building">⚙ Building in progress</span>
-            <span class="fp-flag">★ Flagship project</span>
+  document.getElementById("projectsGrid").innerHTML = ordered.map((p, i) => `
+    <div class="stack-item">
+      <article class="stack-card">
+        <div class="sc-top">
+          <span class="sc-num">${String(i + 1).padStart(2, "0")}</span>
+          <div class="sc-meta">
+            <span class="sc-tag">${p.featured ? "★ " : ""}${p.tag}</span>
+            <h3 class="sc-name">${p.title}</h3>
+            <span class="sc-when">${p.when}${p.featured ? " · ⚙ Building in progress" : ""}</span>
           </div>
-          <h3 class="fp-title">${featured.title}</h3>
-          <p class="fp-tagline">${featured.tagline}</p>
-          <p class="fp-desc">${featured.desc}</p>
-          <div class="fp-highlights">
-            ${featured.highlights.map(([i, t, d]) => `
-              <div class="fp-hl"><span class="fp-hl-ico">${i}</span><div><strong>${t}</strong><span>${d}</span></div></div>`).join("")}
-          </div>
-          <div class="project-stack">${featured.stack.map(s => `<span class="chip">${s}</span>`).join("")}</div>
-          <div class="fp-actions">
-            <a href="${featured.live}" target="_blank" rel="noopener" class="btn btn-primary">▶ Live Demo</a>
-            <a href="${featured.api}" target="_blank" rel="noopener" class="btn btn-ghost">API Docs ↗</a>
-            <span class="fp-private" title="Source is a private repository">🔒 Private repo · ${featured.when}</span>
+          <div class="sc-actions">
+            ${p.live ? `<a href="${p.live}" target="_blank" rel="noopener" class="ghost-btn">Live Project</a>` : ""}
+            ${p.api ? `<a href="${p.api}" target="_blank" rel="noopener" class="ghost-btn">API Docs</a>` : ""}
+            ${p.repo && !p.featured ? `<a href="${p.repo}" target="_blank" rel="noopener" class="ghost-btn">Code</a>` : ""}
+            ${p.featured ? `<span class="sc-private" title="Source is a private repository">🔒 Private repo</span>` : ""}
           </div>
         </div>
-        <aside class="fp-side">
-          <span class="fp-side-label">Live agents</span>
-          <div class="fp-agents">
-            ${featured.agents.map(([name, model]) => `
-              <div class="fp-agent"><span class="fp-agent-dot"></span><span class="fp-agent-name">${name}</span><em class="fp-agent-model ${model.toLowerCase()}">${model}</em></div>`).join("")}
+        ${p.tagline ? `<p class="sc-tagline">${p.tagline}</p>` : ""}
+        <p class="sc-desc">${p.desc}</p>
+        ${p.highlights ? `
+          <div class="sc-highlights">
+            ${p.highlights.map(([ic, t, d]) => `
+              <div class="sc-hl"><span class="sc-hl-ico">${ic}</span><div><strong>${t}</strong><span>${d}</span></div></div>`).join("")}
+          </div>` : ""}
+        ${p.agents ? `
+          <div class="sc-agents">
+            ${p.agents.map(([name, model]) => `
+              <span class="sc-agent"><i class="sc-agent-dot"></i>${name} <em class="sc-agent-model ${model.toLowerCase()}">${model}</em></span>`).join("")}
           </div>
-          <div class="fp-pipeline">
-            <span>Dev</span><i>›</i><span>QE</span><i>›</i><span>Test</span><i>›</i><span>Stage</span><i>›</i><span>Prod</span>
-          </div>
-        </aside>
-      </article>`;
-  }
-
-  document.getElementById("projectsGrid").innerHTML = rest.map(p => `
-    <div class="project-card glass reveal" data-tilt>
-      <span class="project-tag">${p.tag}</span>
-      <h3>${p.title}</h3>
-      <p>${p.desc}</p>
-      <div class="project-stack">${p.stack.map(s => `<span class="chip">${s}</span>`).join("")}</div>
-      <div class="project-foot">
-        <span class="project-when">${p.when}</span>
-        <span class="project-links">
-          ${p.live ? `<a href="${p.live}" target="_blank" rel="noopener" class="project-link">▶ Live</a>` : ""}
-          ${p.repo ? `<a href="${p.repo}" target="_blank" rel="noopener" class="project-link">⌥ Code</a>` : ""}
-        </span>
-      </div>
+          <div class="sc-pipeline"><span>Dev</span><i>›</i><span>QE</span><i>›</i><span>Test</span><i>›</i><span>Stage</span><i>›</i><span>Prod</span></div>` : ""}
+        <div class="sc-chips">${p.stack.map(s => `<span class="chip">${s}</span>`).join("")}</div>
+      </article>
     </div>`).join("");
 }
 function buildLogoLoop() {
-  // Real brand logos via simpleicons CDN (auto brand color). slug -> label
+  // Real brand logos via simpleicons CDN (auto brand color). slug -> label.
+  // Two scroll-driven marquee rows (translated on scroll by fx.js).
   const logos = [
     ["python", "Python"], ["pytorch", "PyTorch"], ["tensorflow", "TensorFlow"],
     ["langchain", "LangChain"], ["huggingface", "Hugging Face"], ["openai", "OpenAI"],
@@ -208,14 +191,18 @@ function buildLogoLoop() {
     ["scikitlearn", "scikit-learn"], ["streamlit", "Streamlit"], ["terraform", "Terraform"],
     ["jenkins", "Jenkins"], ["ollama", "Ollama"], ["googlecolab", "Colab"],
   ];
-  const item = ([slug, label]) =>
-    `<a class="logoloop__item" href="#skills" title="${label}">
+  const tile = ([slug, label]) =>
+    `<a class="mq-tile" href="#skills" title="${label}">
        <img src="https://cdn.simpleicons.org/${slug}" alt="${label}" loading="lazy"
             onerror="this.style.display='none'" />
        <span>${label}</span>
      </a>`;
-  const row = logos.map(item).join("");
-  document.getElementById("logoLoopTrack").innerHTML = row + row; // duplicated for seamless loop
+  const half = Math.ceil(logos.length / 2);
+  const row1 = logos.slice(0, half).map(tile).join("");
+  const row2 = logos.slice(half).map(tile).join("");
+  // tripled for seamless coverage while rows translate on scroll
+  document.getElementById("marqueeRow1").innerHTML = row1 + row1 + row1;
+  document.getElementById("marqueeRow2").innerHTML = row2 + row2 + row2;
 }
 function buildRecognition() {
   const cards = [
@@ -294,7 +281,7 @@ async function loadRepos() {
     if (!repos.length) { grid.innerHTML = `<div class="repo-error glass">No public repositories found yet. <a href="${DATA.github}" target="_blank" style="color:var(--c2)">Visit GitHub ↗</a></div>`; return; }
     grid.innerHTML = repos.map(r => `
       <a href="${r.html_url}" target="_blank" rel="noopener" class="repo-card glass reveal">
-        <span class="repo-name">📦 ${r.name}</span>
+        <span class="repo-name">${r.name}</span>
         <span class="repo-desc">${repoDescription(r)}</span>
         <div class="repo-meta">
           ${r.language ? `<span class="repo-lang"><span class="lang-dot" style="background:${langColors[r.language]||'#7c5cff'}"></span>${r.language}</span>` : ""}
@@ -308,7 +295,7 @@ async function loadRepos() {
     const fallback = Object.entries(REPO_DESCRIPTIONS).filter(([n]) => n !== "Quality-Dev-Orchestration-AI").slice(0, 6);
     grid.innerHTML = fallback.map(([name, desc]) => `
       <a href="https://github.com/${DATA.githubUser}/${name}" target="_blank" rel="noopener" class="repo-card glass reveal">
-        <span class="repo-name">📦 ${name}</span>
+        <span class="repo-name">${name}</span>
         <span class="repo-desc">${desc}</span>
         <div class="repo-meta"><span>↗ View on GitHub</span></div>
       </a>`).join("");
@@ -323,16 +310,22 @@ const progress = document.getElementById("scrollProgress");
 const sections = [...document.querySelectorAll("section[id], header[id]")];
 const navLinks = [...document.querySelectorAll(".nav-link")];
 
+let navTicking = false;
 window.addEventListener("scroll", () => {
-  const st = window.scrollY;
-  const h = document.documentElement.scrollHeight - window.innerHeight;
-  progress.style.width = (st / h * 100) + "%";
-  nav.classList.toggle("scrolled", st > 30);
+  if (navTicking) return;
+  navTicking = true;
+  requestAnimationFrame(() => {
+    navTicking = false;
+    const st = window.scrollY;
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    progress.style.width = (st / h * 100) + "%";
+    nav.classList.toggle("scrolled", st > 30);
 
-  let current = "";
-  sections.forEach(s => { if (st >= s.offsetTop - 140) current = s.id; });
-  navLinks.forEach(l => l.classList.toggle("active", l.getAttribute("href") === "#" + current));
-});
+    let current = "";
+    sections.forEach(s => { if (st >= s.offsetTop - 140) current = s.id; });
+    navLinks.forEach(l => l.classList.toggle("active", l.getAttribute("href") === "#" + current));
+  });
+}, { passive: true });
 
 /* ---------- Unified scroll-driven effects (rAF, performant) ---------- */
 const heroInner = document.querySelector(".hero-inner");
