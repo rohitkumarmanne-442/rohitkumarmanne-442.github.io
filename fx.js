@@ -6,6 +6,7 @@
    4. Marquee      — scroll-driven dual rows
    5. AnimatedText — char-by-char scroll reveal (About)
    6. Card stack   — sticky projects scale on scroll
+   7. Nav slider   — gradient pill glides between active/hovered links
    Every dependency is guarded — page still works if one fails.
    ========================================================= */
 (function () {
@@ -35,6 +36,44 @@
       else target.scrollIntoView({ behavior: "smooth" });
     });
   });
+
+  /* ---------- Nav sliding indicator ----------
+     A single gradient pill that glides to the hovered link, and snaps to the
+     active section's link when you're not hovering. Geometry is cached (only
+     re-measured on resize / font load) so scroll never triggers a layout read. */
+  (function () {
+    const ul = document.getElementById("navLinks");
+    const ind = document.getElementById("navIndicator");
+    if (!ul || !ind) return;
+    const links = [...ul.querySelectorAll(".nav-link")];
+    const isDesktop = () => window.matchMedia("(min-width: 901px)").matches;
+    const geo = new Map();
+    const measure = () => links.forEach((l) =>
+      geo.set(l, { x: l.offsetLeft, y: l.offsetTop, w: l.offsetWidth, h: l.offsetHeight }));
+    const activeLink = () => links.find((l) => l.classList.contains("active"));
+
+    function moveTo(link, show = true) {
+      if (!link || !isDesktop()) { ind.style.opacity = "0"; return; }
+      const g = geo.get(link);
+      if (!g) return;
+      ind.style.width = g.w + "px";
+      ind.style.height = g.h + "px";
+      ind.style.transform = `translate(${g.x}px, ${g.y}px)`;
+      ind.style.opacity = show ? "1" : "0";
+    }
+    const settle = () => { if (!ul.matches(":hover")) moveTo(activeLink()); };
+
+    links.forEach((l) => l.addEventListener("mouseenter", () => moveTo(l)));
+    ul.addEventListener("mouseleave", settle);
+    if (lenis) lenis.on("scroll", settle);
+    else window.addEventListener("scroll", settle, { passive: true });
+    window.addEventListener("resize", () => { measure(); settle(); });
+
+    measure(); settle();
+    // re-measure once webfonts settle (label widths shift)
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measure(); settle(); });
+    setTimeout(() => { measure(); settle(); }, 400);
+  })();
 
   /* ---------- 2. FadeIn — [data-fade] ---------- */
   if (M && !reduced) {
@@ -87,16 +126,20 @@
     if (!sec || !r1 || !r2) return;
     r1.style.willChange = "transform";
     r2.style.willChange = "transform";
-    function update() {
-      const top = sec.offsetTop;
-      const offset = (window.scrollY - top + window.innerHeight) * 0.3;
-      r1.style.transform = `translateX(${offset - 200}px)`;
-      r2.style.transform = `translateX(${-(offset - 200)}px)`;
+    // cache the layout read so we never force a reflow on every scroll frame
+    let secTop = sec.offsetTop;
+    const vh = () => window.innerHeight;
+    function update(y) {
+      const offset = ((y != null ? y : window.scrollY) - secTop + vh()) * 0.3 - 200;
+      // translate3d keeps both rows on their own compositor layer (GPU)
+      r1.style.transform = `translate3d(${offset}px,0,0)`;
+      r2.style.transform = `translate3d(${-offset}px,0,0)`;
     }
+    window.addEventListener("resize", () => { secTop = sec.offsetTop; update(); }, { passive: true });
     if (reduced) { update(); return; }
-    // ride Lenis's animation frame when available — perfectly in sync with the smoothed scroll
-    if (lenis) lenis.on("scroll", update);
-    else window.addEventListener("scroll", update, { passive: true });
+    // ride Lenis's frame (smoothed scrollY) when available — no extra reflow
+    if (lenis) lenis.on("scroll", ({ scroll }) => update(scroll));
+    else window.addEventListener("scroll", () => update(), { passive: true });
     update();
   })();
 
@@ -162,26 +205,96 @@
             app.tubes.setLightsColors(rand(4));
           } catch (err) { /* library API changed — ignore */ }
         });
+
+        /* Pause the WebGL render loop once the hero scrolls out of view, so the
+           GPU isn't fighting the scroll right where About comes in.
+           IMPORTANT: resume with the library's OWN animation loop (captured via
+           getAnimationLoop) — not a stand-in render() — otherwise the time-based
+           tube motion comes back frozen. Skipped entirely if that API is missing,
+           so we never pause something we can't faithfully resume. */
+        const renderer = app.three && app.three.renderer;
+        if (renderer && typeof renderer.setAnimationLoop === "function"
+            && typeof renderer.getAnimationLoop === "function") {
+          let savedLoop = renderer.getAnimationLoop() || null;
+          let running = true;
+          const io = new IntersectionObserver(([entry]) => {
+            const visible = entry.isIntersecting;
+            if (visible === running) return;
+            running = visible;
+            canvas.style.visibility = visible ? "" : "hidden";
+            if (visible) {
+              // restore the real loop (the library may have swapped it on a
+              // visibilitychange while we were paused — restoring ours is safe)
+              if (savedLoop) renderer.setAnimationLoop(savedLoop);
+            } else {
+              const cur = renderer.getAnimationLoop();
+              if (cur) savedLoop = cur;            // keep the freshest real loop
+              renderer.setAnimationLoop(null);
+            }
+          }, { threshold: 0 });
+          io.observe(hero);
+        }
       })
       .catch((err) => console.warn("Tubes background unavailable:", err));
   })();
 
-  /* ---------- 7. Contact form → opens visitor's mail app pre-filled ---------- */
+  /* ---------- 7. Contact form → Web3Forms (delivers to my inbox) ---------- */
   (function () {
     const form = document.getElementById("contactForm");
     if (!form) return;
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const val = (id) => (document.getElementById(id) || { value: "" }).value.trim();
-      const name = val("cfName"), email = val("cfEmail"), msg = val("cfMsg");
-      const subject = encodeURIComponent(`Portfolio contact — ${name}`);
+    const MAILTO = "rohitkumarmanne1@gmail.com";
+    const statusEl = document.getElementById("cfStatus");
+    const btn = form.querySelector(".contact-btn");
+    const setStatus = (msg, kind) => {
+      if (statusEl) { statusEl.textContent = msg; statusEl.className = "cf-status" + (kind ? " " + kind : ""); }
+    };
+    const val = (id) => (document.getElementById(id) || { value: "" }).value.trim();
+    const mailtoFallback = (name, email, msg) => {
+      const subject = encodeURIComponent(`Portfolio contact — ${name || "someone"}`);
       const body = encodeURIComponent(`${msg}\n\n— ${name}\n${email}`);
-      window.location.href = `mailto:rohitkumarmanne1@gmail.com?subject=${subject}&body=${body}`;
-      const btn = form.querySelector(".contact-btn");
-      if (btn) {
-        const prev = btn.textContent;
-        btn.textContent = "Opening your mail app…";
-        setTimeout(() => { btn.textContent = prev; }, 2600);
+      window.location.href = `mailto:${MAILTO}?subject=${subject}&body=${body}`;
+    };
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = val("cfName"), email = val("cfEmail"), msg = val("cfMsg");
+      if (!name || !email || !msg) { setStatus("Please fill in name, email and message.", "error"); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setStatus("That email doesn't look right.", "error"); return; }
+
+      const keyInput = form.querySelector('input[name="access_key"]');
+      const key = keyInput ? keyInput.value.trim() : "";
+      // not configured yet (placeholder) → graceful mailto so the form still works
+      if (!key || key.indexOf("YOUR_") === 0) {
+        setStatus("Opening your mail app…", "");
+        mailtoFallback(name, email, msg);
+        return;
+      }
+
+      const prev = btn ? btn.textContent : "";
+      if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+      setStatus("Sending your message…", "");
+      try {
+        // Send as FormData (not JSON): multipart/form-data is CORS-safelisted, so
+        // the browser sends NO preflight — Web3Forms 403s the OPTIONS preflight that
+        // a JSON Content-Type would trigger. Only the safelisted Accept header is set.
+        const res = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: { Accept: "application/json" },
+          body: new FormData(form),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setStatus("Message sent ✓ — thanks, I'll get back to you soon!", "success");
+          form.reset();
+        } else {
+          setStatus("Couldn't send that — opening your mail app instead…", "error");
+          mailtoFallback(name, email, msg);
+        }
+      } catch (err) {
+        setStatus("Network hiccup — opening your mail app instead…", "error");
+        mailtoFallback(name, email, msg);
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = prev; }
       }
     });
   })();

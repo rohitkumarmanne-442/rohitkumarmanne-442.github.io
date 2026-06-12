@@ -309,6 +309,10 @@ const nav = document.getElementById("nav");
 const progress = document.getElementById("scrollProgress");
 const sections = [...document.querySelectorAll("section[id], header[id]")];
 const navLinks = [...document.querySelectorAll(".nav-link")];
+// only the sections that have a nav link — keeps the active item (and the
+// sliding indicator) stable while scrolling past in-between sections
+const navTargets = new Set(navLinks.map(l => l.getAttribute("href").slice(1)));
+const spySections = sections.filter(s => navTargets.has(s.id));
 
 let navTicking = false;
 window.addEventListener("scroll", () => {
@@ -322,7 +326,7 @@ window.addEventListener("scroll", () => {
     nav.classList.toggle("scrolled", st > 30);
 
     let current = "";
-    sections.forEach(s => { if (st >= s.offsetTop - 140) current = s.id; });
+    spySections.forEach(s => { if (st >= s.offsetTop - 140) current = s.id; });
     navLinks.forEach(l => l.classList.toggle("active", l.getAttribute("href") === "#" + current));
   });
 }, { passive: true });

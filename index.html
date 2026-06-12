@@ -29,14 +29,15 @@
       <canvas class="tubes-canvas" id="tubesCanvas" aria-hidden="true"></canvas>
 
       <nav class="nav" id="nav" data-fade data-y="-20" data-delay="0">
-        <a href="#hero" class="nav-brand">RKM<i>✦</i></a>
-        <ul class="nav-links">
-          <li><a href="#about" class="nav-link">About</a></li>
-          <li><a href="#skills" class="nav-link">Toolkit</a></li>
-          <li><a href="#experience" class="nav-link">Journey</a></li>
-          <li><a href="#projects" class="nav-link">Projects</a></li>
-          <li><a href="#repos" class="nav-link">GitHub</a></li>
-          <li><a href="#contact" class="nav-link">Contact</a></li>
+        <a href="#hero" class="nav-brand"><span class="nav-dot"></span>RKM<i>✦</i></a>
+        <ul class="nav-links" id="navLinks">
+          <span class="nav-indicator" id="navIndicator" aria-hidden="true"></span>
+          <li><a href="#about" class="nav-link" data-n="01">About</a></li>
+          <li><a href="#skills" class="nav-link" data-n="02">Toolkit</a></li>
+          <li><a href="#experience" class="nav-link" data-n="03">Journey</a></li>
+          <li><a href="#projects" class="nav-link" data-n="04">Projects</a></li>
+          <li><a href="#repos" class="nav-link" data-n="05">GitHub</a></li>
+          <li><a href="#contact" class="nav-link" data-n="06">Contact</a></li>
         </ul>
         <div class="nav-right">
           <button class="nav-ai" id="navChatBtn"><span class="shiny-text" data-shiny>Ask my AI</span> ✦</button>
@@ -220,13 +221,23 @@
           <div class="contact-note">Prefer async? The chat agent in the corner knows my résumé inside-out. ✦</div>
         </div>
         <form class="contact-form" id="contactForm" data-fade data-x="30" data-delay="0.2">
+          <!-- Web3Forms: delivers submissions straight to my inbox (no backend).
+               The access key is a PUBLIC frontend key (safe to commit). Get a free
+               one at https://web3forms.com (enter your email → key is emailed),
+               then replace the value below. Until then the form falls back to mailto. -->
+          <input type="hidden" name="access_key" value="0bd13c2f-4854-4644-8e4a-e3b2ecc3ffd9" />
+          <input type="hidden" name="subject" value="New message from your portfolio ✦" />
+          <input type="hidden" name="from_name" value="Portfolio Contact Form" />
+          <!-- honeypot: bots fill this, humans never see it -->
+          <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true" />
           <div class="cf-row">
-            <label class="cf-field"><span>Name</span><input id="cfName" type="text" required placeholder="Jane Recruiter" /></label>
-            <label class="cf-field"><span>Email</span><input id="cfEmail" type="email" required placeholder="jane@company.com" /></label>
+            <label class="cf-field"><span>Name</span><input id="cfName" name="name" type="text" required placeholder="Jane Recruiter" /></label>
+            <label class="cf-field"><span>Email</span><input id="cfEmail" name="email" type="email" required placeholder="jane@company.com" /></label>
           </div>
-          <label class="cf-field"><span>Message</span><textarea id="cfMsg" rows="5" required placeholder="We're hiring an Agentic AI engineer and…"></textarea></label>
+          <label class="cf-field"><span>Message</span><textarea id="cfMsg" name="message" rows="5" required placeholder="We're hiring an Agentic AI engineer and…"></textarea></label>
           <button type="submit" class="contact-btn">Send Message</button>
-          <span class="cf-note">Opens your email app with the message pre-filled — nothing is stored.</span>
+          <span class="cf-status" id="cfStatus" role="status" aria-live="polite"></span>
+          <span class="cf-note">Sent straight to my inbox — I usually reply within a day.</span>
         </form>
       </div>
     </section>
