@@ -62,6 +62,7 @@ WORK EXPERIENCE:
 
 PROJECTS:
 - QD Orchestration (2025 – Present, LIVE & in progress): Unified multi-agent SDLC + SDET platform. A Jira story key flows through 5 Claude-powered agents (Code Generator & Code Reviewer on Opus; Test Case Generator, E2E Playwright Automation, and Splunk→Bug on Sonnet) across Test → Stage → Prod behind 3 Human-in-the-Loop approval gates. Self-healing bug-fix loop, real-time WebSocket pipeline, Monaco code viewer, role-based Dev/QE/Lead/Admin workspaces. Stack: TypeScript/React + FastAPI/Python, SQLModel, deployed on Vercel + Render.
+- Foreman (2026 – Present, open source · npm 'foremanjs' · GitHub Marketplace): A review inbox for AI coding agents. Turns every agent session into a risk-ranked, human-in-the-loop review card. Deterministic risk engine (secrets, mass rewrites, destructive commands, unverified claims) + ed25519-signed, hash-chained MCP receipts proving every tool call (stdio + HTTP/SSE, rug-pull detection). Blast-Radius impact graph, GitHub Action with SARIF export for CI, and a feedback loop that feeds review notes back into the agent. Zero-dependency TypeScript/Node; 100% local, zero external LLM calls.
 - Advanced RAG for SEC Filings (Apr 2025 – Present): LlamaIndex + Groq, semantic chunking, hybrid search (dense + BM25), <5% hallucination, interactive Streamlit app.
 - Face-Generation-Diffusion (Sep–Dec 2024): Custom PyTorch diffusion model, 85% FID improvement on 100,000+ images, 70% faster inference via mixed-precision + gradient checkpointing.
 

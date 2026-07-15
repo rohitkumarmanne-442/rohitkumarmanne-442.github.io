@@ -97,6 +97,22 @@ const DATA = {
       when: "May 2026 – Present",
     },
     {
+      tag: "Open Source · npm · GitHub Marketplace",
+      title: "Foreman — Review Inbox for AI Agents",
+      tagline: "Every AI-agent coding session becomes a risk-ranked, cryptographically-provable review card — 100% local.",
+      desc: "A zero-dependency TypeScript/Node platform that turns every AI-agent session into a risk-ranked review card you work like email. A deterministic risk engine flags secrets, mass rewrites, destructive commands and unverified claims; an ed25519-signed, hash-chained MCP receipt proxy (stdio + HTTP/SSE) proves what tools each agent actually ran and catches tool-list 'rug pulls'. Ships a single-file interactive UI (force-directed 'Blast Radius' impact graph, Insights dashboard, Ctrl+K palette), a GitHub Action with SARIF export for CI enforcement, and a feedback loop that injects human review notes into the agent's next run. v1.0.0 — 36/36 tests, zero external LLM calls.",
+      highlights: [
+        ["🛡️", "Deterministic risk engine", "Secrets, mass rewrites, destructive commands & unverified claims — ranked by severity"],
+        ["🔏", "Signed MCP receipts", "ed25519, hash-chained proof of every tool call — stdio + HTTP/SSE, rug-pull detection"],
+        ["🕸️", "Blast Radius graph", "A live force-directed map of what AI is touching across your codebase"],
+        ["✅", "CI gate + SARIF", "Blocks risky PRs; findings post as native GitHub code-scanning alerts"],
+      ],
+      stack: ["TypeScript", "Node.js", "MCP", "ed25519", "GitHub Actions", "SARIF"],
+      live: "https://www.npmjs.com/package/foremanjs",
+      repo: "https://github.com/rohitkumarmanne-442/Foreman",
+      when: "Jul 2026 – Present",
+    },
+    {
       tag: "Agentic RAG · Live Demo", title: "Advanced Agentic RAG for SEC Filings",
       desc: "Production Agentic RAG over SEC 10-K/10-Q filings using LlamaIndex, Groq Llama-3.1-70B, and planner-executor agents with hybrid search (dense all-MiniLM-L6-v2 + sparse BM25 via RRF, k=60) — 95% context precision, <5% hallucination (RAGAS), and a 23% retrieval lift. Deployed as an interactive Streamlit app.",
       stack: ["Python", "LlamaIndex", "ChromaDB", "Groq", "BM25", "RAGAS", "Streamlit"], when: "Apr 2026 – May 2026",
