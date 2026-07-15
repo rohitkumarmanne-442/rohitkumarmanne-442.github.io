@@ -194,6 +194,17 @@
             },
           },
         });
+
+        // Cap WebGL render resolution — at full retina DPR the tubes fight the
+        // scroll on the hero. 1.5x looks identical but is far lighter on the GPU.
+        try {
+          const _r = app.three && app.three.renderer;
+          if (_r && typeof _r.setPixelRatio === "function") {
+            _r.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+            setTimeout(() => { try { window.dispatchEvent(new Event("resize")); } catch (e) {} }, 60);
+          }
+        } catch (e) { /* library internals changed — ignore */ }
+
         const hero = document.getElementById("hero");
         if (!hero) return;
         hero.addEventListener("click", (e) => {

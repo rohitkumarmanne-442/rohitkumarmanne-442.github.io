@@ -347,41 +347,51 @@ window.addEventListener("scroll", () => {
   });
 }, { passive: true });
 
-/* ---------- Unified scroll-driven effects (rAF, performant) ---------- */
+/* ---------- Unified scroll-driven effects (rAF, zero layout reads) ---------- */
 const heroInner = document.querySelector(".hero-inner");
 const horizon = document.getElementById("recognition");
 const horizonTrack = document.getElementById("horizonTrack");
 const horizonBar = document.getElementById("horizonBar");
 const speedEls = [...document.querySelectorAll("[data-speed]")];
 
-let lastScroll = window.scrollY, ticking = false;
+// Positions are measured ONCE (and on resize / font-load), never during scroll.
+// Reading getBoundingClientRect()/scrollWidth mid-scroll forces a synchronous
+// reflow every frame — that's what made scrolling stick. The loop below only
+// writes transforms now, so it stays on the compositor.
+function absTop(el) { let t = 0; for (let n = el; n; n = n.offsetParent) t += n.offsetTop; return t; }
+let vpH = window.innerHeight, horizonTop = 0, horizonH = 0, horizonMaxX = 0;
+const speedMid = new Map();
+function measureScroll() {
+  vpH = window.innerHeight;
+  if (horizon) { horizonTop = absTop(horizon); horizonH = horizon.offsetHeight; }
+  if (horizonTrack) horizonMaxX = horizonTrack.scrollWidth - window.innerWidth + 48;
+  speedEls.forEach(el => speedMid.set(el, absTop(el) + el.offsetHeight / 2));
+}
 
+let ticking = false;
 function onScrollFrame() {
   const y = window.scrollY;
-  lastScroll = y;
 
   /* 1. Hero parallax — content drifts up, fades & scales as you leave */
   if (heroInner) {
-    const p = Math.min(1, y / window.innerHeight);
+    const p = Math.min(1, y / vpH);
     heroInner.style.transform = `translateY(${y * 0.35}px) scale(${1 - p * 0.08})`;
     heroInner.style.opacity = String(1 - p * 1.1);
   }
 
   /* 2. Horizontal pinned scroll — translate the track as section passes */
   if (horizon && horizonTrack) {
-    const rect = horizon.getBoundingClientRect();
-    const total = horizon.offsetHeight - window.innerHeight;
-    const progress = Math.min(1, Math.max(0, -rect.top / total));
-    const maxX = horizonTrack.scrollWidth - window.innerWidth + 48;
-    if (maxX > 0) horizonTrack.style.transform = `translateX(${-progress * maxX}px)`;
+    const total = horizonH - vpH;
+    const progress = total > 0 ? Math.min(1, Math.max(0, (y - horizonTop) / total)) : 0;
+    if (horizonMaxX > 0) horizonTrack.style.transform = `translateX(${-progress * horizonMaxX}px)`;
     if (horizonBar) horizonBar.style.width = (progress * 100) + "%";
   }
 
   /* 3. Generic parallax for data-speed elements */
   speedEls.forEach(el => {
     const speed = parseFloat(el.dataset.speed);
-    const mid = el.getBoundingClientRect().top + window.scrollY + el.offsetHeight / 2;
-    const offset = (window.scrollY + window.innerHeight / 2 - mid) * speed;
+    const mid = speedMid.get(el) || 0;
+    const offset = (y + vpH / 2 - mid) * speed;
     el.style.transform = `translateY(${offset}px)`;
   });
 
@@ -390,7 +400,10 @@ function onScrollFrame() {
 window.addEventListener("scroll", () => {
   if (!ticking) { ticking = true; requestAnimationFrame(onScrollFrame); }
 }, { passive: true });
+window.addEventListener("resize", () => { measureScroll(); onScrollFrame(); }, { passive: true });
+measureScroll();
 onScrollFrame();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measureScroll(); onScrollFrame(); });
 
 /* Reveal on scroll */
 let revealIO;
